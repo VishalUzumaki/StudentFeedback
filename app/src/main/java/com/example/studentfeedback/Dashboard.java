@@ -47,7 +47,7 @@ public class Dashboard extends AppCompatActivity {
 
     protected void logoutUser() {
         authObj.signOut();
-        startActivity(new Intent(Dashboard.this, Login.class));
+        startActivity(new Intent(Dashboard.this, SelectUniversity.class));
     }
 
 
