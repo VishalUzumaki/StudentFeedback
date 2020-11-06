@@ -25,8 +25,6 @@ public class UniNameHolder extends RecyclerView.ViewHolder implements View.OnCli
 
          itemView.setOnClickListener(this);
 
-
-
     }
 
     @Override

@@ -37,6 +37,8 @@ public class SelectUniversity extends AppCompatActivity {
 
         m.setUniname("Indiana University");
         m.setImage(R.drawable.iulogo);
+        m.setExtension("@iu.edu");
+
 
         models.add(m);
 
@@ -44,6 +46,7 @@ public class SelectUniversity extends AppCompatActivity {
 
         m.setUniname("NYU University");
         m.setImage(R.drawable.nyu);
+        m.setExtension("@nyu.edu");
 
         models.add(m);
 
@@ -51,6 +54,7 @@ public class SelectUniversity extends AppCompatActivity {
 
         m.setUniname("Penn State University");
         m.setImage(R.drawable.penn);
+        m.setExtension("@psu.edu");
 
         models.add(m);
 

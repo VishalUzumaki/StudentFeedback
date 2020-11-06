@@ -47,16 +47,16 @@ public class Dashboard extends AppCompatActivity {
         img = findViewById(R.id.temp2);
 
 
-        Intent ob = getIntent();
-
-        t1.setText(ob.getStringExtra("name"));
-
-        byte[] mBytes = ob.getByteArrayExtra("image");
-
-        Bitmap bitmap = BitmapFactory.decodeByteArray(mBytes,0,mBytes.length);
-
-
-        img.setImageBitmap(bitmap);
+//        Intent ob = getIntent();
+//
+//        t1.setText(ob.getStringExtra("name"));
+//
+//        byte[] mBytes = ob.getByteArrayExtra("image");
+//
+//        Bitmap bitmap = BitmapFactory.decodeByteArray(mBytes,0,mBytes.length);
+//
+//
+//        img.setImageBitmap(bitmap);
 
 
 

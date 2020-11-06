@@ -46,6 +46,8 @@ public class UniNameAdapter  extends RecyclerView.Adapter<UniNameHolder> {
 
                 String UniversityName = models.get(position).getUniname();
 
+                String extension = models.get(position).getExtension();
+
                 BitmapDrawable bitmapDrawable = (BitmapDrawable)holder.UniLogo.getDrawable();
 
                 Bitmap bitmap = bitmapDrawable.getBitmap();
@@ -56,8 +58,10 @@ public class UniNameAdapter  extends RecyclerView.Adapter<UniNameHolder> {
 
                 byte[] bytes = stream.toByteArray();
 
-                Intent intent = new Intent(c,Dashboard.class);
+                Intent intent = new Intent(c,Login.class);
+
                 intent.putExtra("name",UniversityName);
+                intent.putExtra("extension",extension);
                 intent.putExtra("image",bytes);
 
                 c.startActivity(intent);

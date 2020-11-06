@@ -3,7 +3,17 @@ package com.example.studentfeedback;
 public class Model {
 
     private int image;
+    private String extension;
     private String Uniname;
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
+
 
     public int getImage() {
         return image;

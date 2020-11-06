@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,6 +27,13 @@ public class SignupPage extends AppCompatActivity {
     private EditText password,username;
     private Button submit,signup;
 
+    private ImageView imageView;
+
+    private String extensionDomain ="";
+    private String UniversityName ="";
+    private byte[] mBytes;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,10 +43,25 @@ public class SignupPage extends AppCompatActivity {
 
         password = findViewById(R.id.password);
         username = findViewById(R.id.username);
-
+        imageView = findViewById(R.id.imageView);
 
         signup= findViewById(R.id.signup);
 
+
+
+        Intent ob = getIntent();
+
+        extensionDomain=ob.getStringExtra("extension");
+        UniversityName=ob.getStringExtra("name");
+
+//        t1.setText(ob.getStringExtra("name"));
+
+        mBytes = ob.getByteArrayExtra("image");
+
+        Bitmap bitmap = BitmapFactory.decodeByteArray(mBytes,0,mBytes.length);
+
+
+        imageView.setImageBitmap(bitmap);
 
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +88,7 @@ public class SignupPage extends AppCompatActivity {
 
 
     protected void signup() {
-        String email_credential = username.getText().toString();
+        String email_credential = username.getText().toString() + extensionDomain;
         String password_credential = password.getText().toString();
 
         mAuth.createUserWithEmailAndPassword(email_credential, password_credential)

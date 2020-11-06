@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,6 +25,12 @@ public class Login extends AppCompatActivity {
     private FirebaseAuth authObj;
     private EditText password,username;
     private Button submit,signup;
+    private ImageView imageView;
+
+    private String extensionDomain ="";
+    private String UniversityName ="";
+    private byte[] mBytes;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,20 +39,15 @@ public class Login extends AppCompatActivity {
 
         password = findViewById(R.id.password);
         username = findViewById(R.id.username);
+        imageView = findViewById(R.id.logo);
 
 
         signup= findViewById(R.id.signup);
 
-        signup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(Login.this, SignupPage.class));
-            }
-        });
+
 
 
         submit = findViewById(R.id.login);
-
 
 
         submit.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +58,36 @@ public class Login extends AppCompatActivity {
         });
 
         authObj = FirebaseAuth.getInstance();
+
+
+        Intent ob = getIntent();
+
+        extensionDomain=ob.getStringExtra("extension");
+        UniversityName=ob.getStringExtra("name");
+
+//        t1.setText(ob.getStringExtra("name"));
+
+        mBytes = ob.getByteArrayExtra("image");
+
+        Bitmap bitmap = BitmapFactory.decodeByteArray(mBytes,0,mBytes.length);
+
+
+        imageView.setImageBitmap(bitmap);
+
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                Intent intent = new Intent(Login.this, SignupPage.class);
+                intent.putExtra("name",UniversityName);
+                intent.putExtra("extension",extensionDomain);
+                intent.putExtra("image",mBytes);
+
+                startActivity(intent);
+            }
+        });
+
 
     }
 
@@ -71,7 +105,7 @@ public class Login extends AppCompatActivity {
     }
 
     protected void login() {
-        String email_credential = username.getText().toString();
+        String email_credential = username.getText().toString()+extensionDomain;
         String password_credential = password.getText().toString();
 
         authObj.signInWithEmailAndPassword(email_credential, password_credential)
