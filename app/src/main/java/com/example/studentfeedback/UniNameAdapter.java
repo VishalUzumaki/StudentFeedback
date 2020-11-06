@@ -12,12 +12,12 @@ import java.util.ArrayList;
 
 public class UniNameAdapter  extends RecyclerView.Adapter<UniNameHolder> {
 
-    Context c;
+//    Context c;
     ArrayList<Model> models;
 
 
     public UniNameAdapter(SelectUniversity selectUniversity, ArrayList<Model> models) {
-        this.c =c;
+//        this.c =c;
         this.models = models;
     }
 
@@ -25,7 +25,7 @@ public class UniNameAdapter  extends RecyclerView.Adapter<UniNameHolder> {
     @Override
     public UniNameHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.university_name, null);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.university_name, null); // layout for each file
 
         return new UniNameHolder(view);
     }

@@ -36,14 +36,21 @@ public class SelectUniversity extends AppCompatActivity {
         Model m =new Model();
 
         m.setUniname("Indiana University");
-        m.setImage(R.drawable.ic_launcher_background);
+        m.setImage(R.drawable.iulogo);
 
         models.add(m);
 
         m =new Model();
 
         m.setUniname("NYU University");
-        m.setImage(R.drawable.ic_launcher_background);
+        m.setImage(R.drawable.nyu);
+
+        models.add(m);
+
+        m =new Model();
+
+        m.setUniname("Penn State University");
+        m.setImage(R.drawable.penn);
 
         models.add(m);
 

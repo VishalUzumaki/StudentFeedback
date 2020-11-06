@@ -4,9 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:textAlignment="center"
     tools:context=".SelectUniversity">
 
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Select University"
+        android:textAlignment="center"
+        android:textSize="30sp" />
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycleViewList"
         android:layout_width="409dp"
         android:layout_height="729dp"
         android:layout_marginStart="1dp"
@@ -17,7 +28,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/recycleViewList"
 
         />
 </LinearLayout>
