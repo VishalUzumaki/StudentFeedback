@@ -3,9 +3,14 @@ package com.example.studentfeedback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.TestLooperManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -16,6 +21,12 @@ public class Dashboard extends AppCompatActivity {
     private FirebaseAuth authObj;
 
     private Button logout;
+
+
+    private ImageView img;
+
+    private TextView t1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +40,26 @@ public class Dashboard extends AppCompatActivity {
                 logoutUser();
             }
         });
+
+
+        t1= findViewById(R.id.temp);
+
+        img = findViewById(R.id.temp2);
+
+
+        Intent ob = getIntent();
+
+        t1.setText(ob.getStringExtra("name"));
+
+        byte[] mBytes = ob.getByteArrayExtra("image");
+
+        Bitmap bitmap = BitmapFactory.decodeByteArray(mBytes,0,mBytes.length);
+
+
+        img.setImageBitmap(bitmap);
+
+
+
     }
 
 

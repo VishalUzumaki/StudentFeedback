@@ -1,6 +1,9 @@
 package com.example.studentfeedback;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,16 +11,17 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class UniNameAdapter  extends RecyclerView.Adapter<UniNameHolder> {
 
-//    Context c;
+    Context c;
     ArrayList<Model> models;
 
 
     public UniNameAdapter(SelectUniversity selectUniversity, ArrayList<Model> models) {
-//        this.c =c;
+        this.c =selectUniversity;
         this.models = models;
     }
 
@@ -31,11 +35,35 @@ public class UniNameAdapter  extends RecyclerView.Adapter<UniNameHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UniNameHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final UniNameHolder holder, int position) {
 
         holder.UniName.setText(models.get(position).getUniname());
         holder.UniLogo.setImageResource(models.get(position).getImage());
 
+        holder.setItemClickListener(new UniversityClick() {
+            @Override
+            public void onUniversitySelected(View v, int position) {
+
+                String UniversityName = models.get(position).getUniname();
+
+                BitmapDrawable bitmapDrawable = (BitmapDrawable)holder.UniLogo.getDrawable();
+
+                Bitmap bitmap = bitmapDrawable.getBitmap();
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+                byte[] bytes = stream.toByteArray();
+
+                Intent intent = new Intent(c,Dashboard.class);
+                intent.putExtra("name",UniversityName);
+                intent.putExtra("image",bytes);
+
+                c.startActivity(intent);
+
+            }
+        });
 
 
     }
