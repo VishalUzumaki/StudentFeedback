@@ -1,19 +1,33 @@
 package com.example.studentfeedback;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.TestLooperManager;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.nio.channels.InterruptedByTimeoutException;
+import java.util.ArrayList;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -22,14 +36,14 @@ public class Dashboard extends AppCompatActivity {
 
     private Button logout;
 
+    private EditText t1;
 
-    private ImageView img;
-
-    private TextView t1;
+    private ListView coursesList;
 
 
+    @SuppressLint("WrongViewCast")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         authObj = FirebaseAuth.getInstance();
@@ -42,9 +56,57 @@ public class Dashboard extends AppCompatActivity {
         });
 
 
-        t1= findViewById(R.id.temp);
+        coursesList = findViewById(R.id.coursesList);
 
-        img = findViewById(R.id.temp2);
+        final ArrayList<String> list = new ArrayList<>();
+        final ArrayAdapter adapter= new ArrayAdapter(this, R.layout.course_list_item,list);
+
+        coursesList.setAdapter(adapter);
+
+
+//        getting University Name for course search
+        Intent uniName = getIntent();
+        String universityName = "";
+        universityName=uniName.getStringExtra("name");
+
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference().child("University").child(universityName);
+
+
+        t1=findViewById(R.id.search);
+
+        t1.setText(universityName.toString());
+
+        // Read from the database
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                list.clear();
+
+                Log.d("reach","reaching here" + dataSnapshot);
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Log.d("reach","inside for loop");
+
+//                    t1.setText(t1.getText().toString() + "," +snapshot.getValue().toString());
+                    list.add(snapshot.getKey().toString());
+                    Log.d("success", "Value is: " + snapshot.getValue().toString());
+                }
+
+                adapter.notifyDataSetChanged() ;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("failed", "Failed to read value.", error.toException());
+            }
+        });
+
+//        myRef.setValue("Hello, World!");
 
 
 //        Intent ob = getIntent();
@@ -67,6 +129,11 @@ public class Dashboard extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = authObj.getCurrentUser();
+
+        if(currentUser == null){
+            startActivity(new Intent(Dashboard.this, SelectUniversity.class));
+        }
+
 
 //        if (currentUser != null) {
 //            startActivity(new Intent( Dashboard.this,Login.class));

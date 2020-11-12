@@ -2,6 +2,7 @@ package com.example.studentfeedback;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
@@ -63,6 +64,13 @@ public class UniNameAdapter  extends RecyclerView.Adapter<UniNameHolder> {
                 intent.putExtra("name",UniversityName);
                 intent.putExtra("extension",extension);
                 intent.putExtra("image",bytes);
+
+                SharedPreferences pref = c.getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+                SharedPreferences.Editor editor = pref.edit();
+
+                editor.putString("University", UniversityName); // Storing University Name
+
+                editor.commit(); // commit changes
 
                 c.startActivity(intent);
 

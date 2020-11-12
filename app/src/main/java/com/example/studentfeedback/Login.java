@@ -98,7 +98,9 @@ public class Login extends AppCompatActivity {
         FirebaseUser currentUser = authObj.getCurrentUser();
 
         if (currentUser != null) {
-            startActivity(new Intent(Login.this, Dashboard.class));
+            Intent openDashboard = new Intent(Login.this,Dashboard.class);
+            openDashboard.putExtra("name",UniversityName);
+            startActivity(openDashboard);
         }
 
 //         if user is already logged in
@@ -114,7 +116,9 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.w("Success", "successlogin");
-                            startActivity(new Intent(Login.this,Dashboard.class));
+                            Intent openDashboard = new Intent(Login.this,Dashboard.class);
+                            openDashboard.putExtra("name",UniversityName);
+                            startActivity(openDashboard);
                         } else {
                             Log.w("Fail", "error", task.getException());
                             Toast.makeText(Login.this, "Login failed", Toast.LENGTH_LONG).show();

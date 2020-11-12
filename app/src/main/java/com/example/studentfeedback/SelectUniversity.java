@@ -4,7 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
@@ -12,12 +17,14 @@ public class SelectUniversity extends AppCompatActivity {
 
     RecyclerView universityNames;
     UniNameAdapter uniNameAdapter;
+    private FirebaseAuth authObj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_university);
 
+        authObj = FirebaseAuth.getInstance();
 
         universityNames = findViewById(R.id.recycleViewList);
         universityNames.setLayoutManager(new LinearLayoutManager(this));
@@ -29,13 +36,31 @@ public class SelectUniversity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = authObj.getCurrentUser();
+
+        if(currentUser != null){
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
+            String uniName=pref.getString("University", null);
+
+            Intent openDashboard = new Intent(SelectUniversity.this, Dashboard.class);
+
+            openDashboard.putExtra("name",uniName);
+
+            startActivity(openDashboard);
+        }
+
+    }
+
     private ArrayList<Model> getNamesList(){
 
         ArrayList<Model> models = new ArrayList<>();
 
         Model m =new Model();
 
-        m.setUniname("Indiana University");
+        m.setUniname("Indiana");
         m.setImage(R.drawable.iulogo);
         m.setExtension("@iu.edu");
 
@@ -44,7 +69,7 @@ public class SelectUniversity extends AppCompatActivity {
 
         m =new Model();
 
-        m.setUniname("NYU University");
+        m.setUniname("NYU");
         m.setImage(R.drawable.nyu);
         m.setExtension("@nyu.edu");
 
@@ -52,7 +77,7 @@ public class SelectUniversity extends AppCompatActivity {
 
         m =new Model();
 
-        m.setUniname("Penn State University");
+        m.setUniname("PSU");
         m.setImage(R.drawable.penn);
         m.setExtension("@psu.edu");
 

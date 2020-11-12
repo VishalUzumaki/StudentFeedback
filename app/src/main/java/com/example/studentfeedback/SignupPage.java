@@ -79,7 +79,10 @@ public class SignupPage extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
-            startActivity(new Intent(SignupPage.this, Dashboard.class));
+            Intent openDashboard = new Intent(SignupPage.this,Dashboard.class);
+            openDashboard.putExtra("name",UniversityName);
+            startActivity(openDashboard);
+
         }
 
 //         if user is already logged in
