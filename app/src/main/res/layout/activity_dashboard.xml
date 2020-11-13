@@ -9,7 +9,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">>
+        android:orientation="vertical"><![CDATA[>
+
+
+        ]]>
 
         <Button
             android:id="@+id/logout"
@@ -21,12 +24,26 @@
         <EditText
             android:id="@+id/search"
             android:layout_width="match_parent"
-            android:layout_height="47dp"
-            android:text="Course Search"
+            android:layout_height="wrap_content"
+            android:hint="Algorithm,Medium, etc "
             tools:ignore="MissingConstraints" />
 
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="118dp"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/button_onoff_indicator_on"
+            android:text="Search"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/design_default_color_primary"
+             />
 
         <ListView
+            android:paddingTop="5dp"
             android:id="@+id/coursesList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

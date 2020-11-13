@@ -50,7 +50,8 @@ public class CourseDetail extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 Log.d("reach","reaching inside the subject" + dataSnapshot);
-              difficult.setText(dataSnapshot.getValue().toString());
+                difficult.setText("Difficulty level: "+dataSnapshot.child("difficulty").getValue().toString());
+                avg_rating.setText("Overall Rating: "+dataSnapshot.child("average_rating").getValue().toString());
             }
 
             @Override

@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.TestLooperManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -36,14 +37,17 @@ public class Dashboard extends AppCompatActivity {
 
     private FirebaseAuth authObj;
 
-    private Button logout;
+    private Button logout,searchButton;
 
-    private EditText t1;
+    private EditText searchString;
 
     private ListView coursesList;
 
 
     private  String universityName = "";
+
+    private DataSnapshot temp_dataSnapshot;
+
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -52,6 +56,8 @@ public class Dashboard extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
         authObj = FirebaseAuth.getInstance();
         logout = findViewById(R.id.logout);
+        searchButton = findViewById(R.id.searchButton);
+
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,15 +105,18 @@ public class Dashboard extends AppCompatActivity {
         DatabaseReference myRef = database.getReference().child("University").child(universityName);
 
 
-        t1=findViewById(R.id.search);
+        searchString=findViewById(R.id.search);
 
-        t1.setText(universityName.toString());
+
+
+//        searchString.setText(universityName.toString());
 
         // Read from the database
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                temp_dataSnapshot = dataSnapshot;
 
                 list.clear();
 
@@ -130,6 +139,75 @@ public class Dashboard extends AppCompatActivity {
                 Log.w("failed", "Failed to read value.", error.toException());
             }
         });
+
+
+//        searchString.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+//
+//                Log.d("tempdataset",temp_dataSnapshot.toString());
+//
+//                list.clear();
+//
+//                for (DataSnapshot snapshot : temp_dataSnapshot.getChildren()) {
+//                    Log.d("reach","tempdataset");
+//
+//                    String tempSearchString  = searchString.getText().toString();
+//
+//                    if (tempSearchString != "")
+//                    {
+//
+//                        if(snapshot.getValue().toString().indexOf(tempSearchString) != -1){
+//                            list.add(snapshot.getKey().toString());
+//                            Log.d("filtered", "Value is: " + snapshot.getValue().toString());
+//                        }
+//
+//                    }else{
+//                        list.add(snapshot.getKey().toString());
+//                    }
+////                    Log.d("success", "Value is: " + snapshot.getValue().toString());
+//                }
+//
+//                adapter.notifyDataSetChanged() ;
+//
+//                return true;
+//            }
+//        });
+
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("tempdataset",temp_dataSnapshot.toString());
+
+                list.clear();
+
+                for (DataSnapshot snapshot : temp_dataSnapshot.getChildren()) {
+                    Log.d("reach","tempdataset");
+
+                    String tempSearchString  = searchString.getText().toString().toLowerCase();
+
+                    if (tempSearchString != "")
+                    {
+
+                        if(snapshot.getValue().toString().toLowerCase().indexOf(tempSearchString) != -1 || snapshot.getKey().toString().toLowerCase().indexOf(tempSearchString) != -1){
+                            list.add(snapshot.getKey().toString());
+                            Log.d("filtered", "Value is: " + snapshot.getValue().toString());
+                        }
+
+                    }else{
+                        list.add(snapshot.getKey().toString());
+                    }
+//                    Log.d("success", "Value is: " + snapshot.getValue().toString());
+                }
+
+                adapter.notifyDataSetChanged() ;
+
+            }
+        });
+
+
+
 
 //        myRef.setValue("Hello, World!");
 
