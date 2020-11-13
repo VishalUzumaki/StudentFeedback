@@ -11,12 +11,14 @@ import android.os.Bundle;
 import android.os.TestLooperManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,6 +43,8 @@ public class Dashboard extends AppCompatActivity {
     private ListView coursesList;
 
 
+    private  String universityName = "";
+
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -58,16 +62,37 @@ public class Dashboard extends AppCompatActivity {
 
         coursesList = findViewById(R.id.coursesList);
 
+
+        Intent uniName = getIntent();
+
+        universityName=uniName.getStringExtra("name");
+
         final ArrayList<String> list = new ArrayList<>();
         final ArrayAdapter adapter= new ArrayAdapter(this, R.layout.course_list_item,list);
 
         coursesList.setAdapter(adapter);
 
 
+
+        coursesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+//                Toast.makeText(Dashboard.this,"clicked item "+list.get(i),Toast.LENGTH_LONG).show();
+
+                Intent openCourseDetails = new Intent(Dashboard.this,CourseDetail.class);
+
+
+                openCourseDetails.putExtra("universityName", universityName);
+                openCourseDetails.putExtra("courseName",list.get(i));
+
+
+                startActivity(openCourseDetails);
+
+            }
+        });
+
 //        getting University Name for course search
-        Intent uniName = getIntent();
-        String universityName = "";
-        universityName=uniName.getStringExtra("name");
 
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
