@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.TestLooperManager;
 import android.text.Editable;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -23,6 +25,8 @@ public class CourseDetail extends AppCompatActivity {
     private String universityName="";
     private String courseTitle="";
 
+    private Button addReview;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +35,8 @@ public class CourseDetail extends AppCompatActivity {
         courseName = findViewById(R.id.courseName);
         difficult = findViewById(R.id.difficulty);
         avg_rating = findViewById(R.id.overall_rating);
+        addReview = findViewById(R.id.addReview);
+
 
 
         Intent courseNameIntent = getIntent();
@@ -62,7 +68,20 @@ public class CourseDetail extends AppCompatActivity {
         });
 
 
+        addReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+                Intent addSurvey = new Intent(CourseDetail.this,CourseSurvey.class);
+
+                addSurvey.putExtra("University",universityName);
+                addSurvey.putExtra("CourseName",courseTitle);
+
+                startActivity(addSurvey);
+
+
+            }
+        });
 
     }
 }

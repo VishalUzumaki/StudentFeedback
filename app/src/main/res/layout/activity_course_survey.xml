@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:textAlignment="center"
-    tools:context=".CourseDetail">
+    tools:context=".CourseSurvey">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,30 +15,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/courseName"
+        <EditText
+            android:id="@+id/review"
             android:layout_width="match_parent"
-            android:layout_height="69dp"
-            android:text="Course Name"
-            android:textAlignment="center"
-            android:textSize="30sp" />
-
-        <TextView
-            android:id="@+id/overall_rating"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
-
-        <TextView
-            android:id="@+id/difficulty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:layout_height="47dp"
+            android:hint="Add Review" />
 
         <Button
-            android:id="@+id/addReview"
+            android:id="@+id/submitSurvey"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add Review" />
+            android:text="Submit" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
