@@ -4,12 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.TestLooperManager;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,11 +18,12 @@ import com.google.firebase.database.ValueEventListener;
 
 public class CourseDetail extends AppCompatActivity {
 
-    private TextView courseName,difficult,avg_rating;
+    private TextView courseName,description,syllabus;
 
 
     private String universityName="";
     private String courseTitle="";
+    private String departmentSelected="";
 
     private Button addReview;
 
@@ -33,8 +33,9 @@ public class CourseDetail extends AppCompatActivity {
         setContentView(R.layout.activity_course_detail);
 
         courseName = findViewById(R.id.courseName);
-        difficult = findViewById(R.id.difficulty);
-        avg_rating = findViewById(R.id.overall_rating);
+        syllabus = findViewById(R.id.syllabus);
+        description = findViewById(R.id.description);
+
         addReview = findViewById(R.id.addReview);
 
 
@@ -42,22 +43,41 @@ public class CourseDetail extends AppCompatActivity {
         Intent courseNameIntent = getIntent();
 
         universityName = courseNameIntent.getStringExtra("universityName");
-        courseTitle = courseNameIntent.getStringExtra("courseName");
 
-        courseName.setText(universityName+ " "+courseTitle);
+        String courseTitlearray[] = courseNameIntent.getStringExtra("courseName").split(" ");
+
+        courseTitle = courseTitlearray[0]+" "+courseTitlearray[1];
+
+        departmentSelected = courseNameIntent.getStringExtra("departmentSelected");
+
+        String courseHeader = "";
+
+        for(int i=0;i<courseTitlearray.length;i++)
+        {
+            courseHeader=courseHeader+courseTitlearray[i]+" ";
+        }
+
+        courseName.setText(departmentSelected+" "+courseHeader);
 
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-        DatabaseReference subjectRef = database.getReference().child("University").child(universityName).child(courseTitle);
+        DatabaseReference subjectRef = database.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle);
 
         subjectRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 Log.d("reach","reaching inside the subject" + dataSnapshot);
-                difficult.setText("Difficulty level: "+dataSnapshot.child("difficulty").getValue().toString());
-                avg_rating.setText("Overall Rating: "+dataSnapshot.child("average_rating").getValue().toString());
+
+                if(dataSnapshot.getValue() != null) {
+                    description.setText("Course Description: " + dataSnapshot.child("description").getValue().toString());
+                    syllabus.setText("Overall Rating: " + dataSnapshot.child("syllabus").getValue().toString());
+                }
+                else{
+                    Toast.makeText(CourseDetail.this,"Incosistent Data present for this course ",Toast.LENGTH_LONG).show();
+                }
+
             }
 
             @Override

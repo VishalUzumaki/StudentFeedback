@@ -19,19 +19,19 @@
         <TextView
             android:id="@+id/courseName"
             android:layout_width="match_parent"
-            android:layout_height="69dp"
+            android:layout_height="190dp"
             android:text="Course Name"
             android:textAlignment="center"
             android:textSize="30sp" />
 
         <TextView
-            android:id="@+id/overall_rating"
+            android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView" />
 
         <TextView
-            android:id="@+id/difficulty"
+            android:id="@+id/syllabus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView" />

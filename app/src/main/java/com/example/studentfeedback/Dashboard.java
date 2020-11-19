@@ -89,6 +89,11 @@ public class Dashboard extends AppCompatActivity {
         universityName=uniName.getStringExtra("name");
 
         final ArrayList<String> list = new ArrayList<>();
+
+//         this value will be useful for the course details page to get the department name if All is selected
+        final ArrayList<String> placeholderforDepartmentName = new ArrayList<>();
+
+
         final ArrayAdapter adapter= new ArrayAdapter(this, R.layout.course_list_item,list);
 
 
@@ -106,6 +111,16 @@ public class Dashboard extends AppCompatActivity {
 
 
                 openCourseDetails.putExtra("universityName", universityName);
+
+                Log.d("placeholder","for department|"+placeholderforDepartmentName.toString());
+
+                if(departmentSelected == "All"){
+                    openCourseDetails.putExtra("departmentSelected",placeholderforDepartmentName.get(i));
+                }
+                else{
+                    openCourseDetails.putExtra("departmentSelected",departmentSelected);
+                }
+
                 openCourseDetails.putExtra("courseName",list.get(i));
 
 
@@ -176,12 +191,18 @@ public class Dashboard extends AppCompatActivity {
 
                 list.clear();
 
+                placeholderforDepartmentName.clear();
+
                 Log.d("reach","reaching here" + dataSnapshot);
 
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
+                 String departmentPlaceHolder = snapshot.getKey().toString();
+
                  for(DataSnapshot courseSnapshot: snapshot.getChildren()) {
+
+                     placeholderforDepartmentName.add(departmentPlaceHolder);
 
                      Log.d("reach", "inside for loop");
 //                   t1.setText(t1.getText().toString() + "," +snapshot.getValue().toString());
@@ -208,28 +229,34 @@ public class Dashboard extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d("tempdataset",temp_dataSnapshot.toString());
 
+                placeholderforDepartmentName.clear();
+
                 list.clear();
 
                 for (DataSnapshot snapshot : temp_dataSnapshot.getChildren()) {
 
+                    String departmentPlaceHolder = snapshot.getKey().toString();
+
                     for(DataSnapshot courseSnapshot: snapshot.getChildren()) {
 
-                    Log.d("reach", "tempdataset");
+                        placeholderforDepartmentName.add(departmentPlaceHolder);
 
-                    String tempSearchString = searchString.getText().toString().toLowerCase();
+                        Log.d("reach", "tempdataset");
 
-                    if (tempSearchString != "") {
+                        String tempSearchString = searchString.getText().toString().toLowerCase();
 
-                        if (courseSnapshot.getValue().toString().toLowerCase().indexOf(tempSearchString) != -1 || courseSnapshot.getKey().toString().toLowerCase().indexOf(tempSearchString) != -1) {
+                        if (tempSearchString != "") {
+
+                            if (courseSnapshot.getValue().toString().toLowerCase().indexOf(tempSearchString) != -1 || courseSnapshot.getKey().toString().toLowerCase().indexOf(tempSearchString) != -1) {
+                                list.add(courseSnapshot.getKey().toString()+" "+courseSnapshot.child("courseName").getValue().toString());
+                                Log.d("filtered", "Value is: " + courseSnapshot.getValue().toString());
+                            }
+
+                        } else {
                             list.add(courseSnapshot.getKey().toString()+" "+courseSnapshot.child("courseName").getValue().toString());
-                            Log.d("filtered", "Value is: " + courseSnapshot.getValue().toString());
                         }
-
-                    } else {
-                        list.add(courseSnapshot.getKey().toString()+" "+courseSnapshot.child("courseName").getValue().toString());
+    //                    Log.d("success", "Value is: " + snapshot.getValue().toString());
                     }
-//                    Log.d("success", "Value is: " + snapshot.getValue().toString());
-                }
                 }
 
                 adapter.notifyDataSetChanged() ;
@@ -254,9 +281,13 @@ public class Dashboard extends AppCompatActivity {
                 {
                     departmentSpecificCourse = database.getReference().child("University").child(universityName).child(departmentSelected);
 
+
+
                     departmentSpecificCourse.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+
+//                            temp_dataSnapshot = dataSnapshot;
 
                             list.clear();
 
@@ -279,9 +310,12 @@ public class Dashboard extends AppCompatActivity {
 
                     departmentSpecificCourse =  database.getReference().child("University").child(universityName);
 
+
                     departmentSpecificCourse.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+
+//                            temp_dataSnapshot = dataSnapshot;
 
                             list.clear();
 
