@@ -116,7 +116,7 @@ public class Dashboard extends AppCompatActivity {
 
 //        getting University Name for course search
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         DatabaseReference departmentNames = database.getReference().child("University").child(universityName);
 
@@ -179,7 +179,6 @@ public class Dashboard extends AppCompatActivity {
                 Log.d("reach","reaching here" + dataSnapshot);
 
 
-
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                  for(DataSnapshot courseSnapshot: snapshot.getChildren()) {
@@ -202,39 +201,6 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
-
-//        searchString.setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-//
-//                Log.d("tempdataset",temp_dataSnapshot.toString());
-//
-//                list.clear();
-//
-//                for (DataSnapshot snapshot : temp_dataSnapshot.getChildren()) {
-//                    Log.d("reach","tempdataset");
-//
-//                    String tempSearchString  = searchString.getText().toString();
-//
-//                    if (tempSearchString != "")
-//                    {
-//
-//                        if(snapshot.getValue().toString().indexOf(tempSearchString) != -1){
-//                            list.add(snapshot.getKey().toString());
-//                            Log.d("filtered", "Value is: " + snapshot.getValue().toString());
-//                        }
-//
-//                    }else{
-//                        list.add(snapshot.getKey().toString());
-//                    }
-////                    Log.d("success", "Value is: " + snapshot.getValue().toString());
-//                }
-//
-//                adapter.notifyDataSetChanged() ;
-//
-//                return true;
-//            }
-//        });
 
 
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -272,33 +238,52 @@ public class Dashboard extends AppCompatActivity {
         });
 
 
-//        selectDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//
-//
-//                departmentSelected = departmentsList.get(position);
-//
-//                Log.d("tempdataset",temp_dataSnapshot.toString());
-//
-//                list.clear();
-//
-//                for (DataSnapshot snapshot : temp_dataSnapshot.child(departmentSelected).getChildren()) {
-//
-//                        list.add(snapshot.getKey().toString());
-//
-//                }
-//
-//                adapter.notifyDataSetChanged() ;
-//
-//
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
+        selectDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                departmentSelected = departmentsList.get(position);
+
+
+                Log.d("departmentSelected",departmentSelected);
+
+
+                DatabaseReference departmentSpecificCourse;
+
+                departmentSpecificCourse = database.getReference().child("University").child(universityName).child(departmentSelected);
+
+                departmentSpecificCourse.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        list.clear();
+
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                list.add(snapshot.getKey().toString());
+                        }
+
+                        adapter.notifyDataSetChanged() ;
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.w("failed", "Failed to read value.", error.toException());
+                    }
+                });
+
+
+
+                adapter.notifyDataSetChanged() ;
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
 
