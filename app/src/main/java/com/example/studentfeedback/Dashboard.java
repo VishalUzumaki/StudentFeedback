@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.TestLooperManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.nio.channels.InterruptedByTimeoutException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -46,7 +49,12 @@ public class Dashboard extends AppCompatActivity {
 
     private  String universityName = "";
 
+
     private DataSnapshot temp_dataSnapshot;
+
+    private Spinner selectDepartment;
+
+    private String departmentSelected="";
 
 
     @SuppressLint("WrongViewCast")
@@ -54,9 +62,16 @@ public class Dashboard extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
         authObj = FirebaseAuth.getInstance();
+
         logout = findViewById(R.id.logout);
+
         searchButton = findViewById(R.id.searchButton);
+
+//        Spinner for filtering department
+        selectDepartment =  (Spinner) findViewById(R.id.departmentSelected);
+
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,6 +90,7 @@ public class Dashboard extends AppCompatActivity {
 
         final ArrayList<String> list = new ArrayList<>();
         final ArrayAdapter adapter= new ArrayAdapter(this, R.layout.course_list_item,list);
+
 
         coursesList.setAdapter(adapter);
 
@@ -100,18 +116,58 @@ public class Dashboard extends AppCompatActivity {
 
 //        getting University Name for course search
 
-
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("University").child(universityName);
 
+        DatabaseReference departmentNames = database.getReference().child("University").child(universityName);
+
+        Log.d("test",departmentNames.toString());
+
+        final List<String> departmentsList = new ArrayList<String>();
+
+        departmentsList.add("All"); //This is for All
+
+
+        departmentNames.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot objSnapshot: snapshot.getChildren()) {
+
+                    Log.d("test","data"+objSnapshot.getKey().toString());
+
+                    departmentsList.add(objSnapshot.getKey().toString());
+
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError firebaseError) {
+                Log.e("Read failed", firebaseError.getMessage());
+            }
+        });
+
+
+        ArrayAdapter<String> departmentNameAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, departmentsList);
+
+
+        departmentNameAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        selectDepartment.setAdapter(departmentNameAdapter);
+
+        DatabaseReference myRef;
+//      this is the reference of university name from where we will get list of subject names
+        myRef = database.getReference().child("University").child(universityName);
+
+
+
+//        if(departmentSelected == "") {
+//
+//        }
+//        else{
+//          myRef = database.getReference().child("University").child(universityName).child(departmentSelected);
+//        }
 
         searchString=findViewById(R.id.search);
 
-
-
-//        searchString.setText(universityName.toString());
-
-        // Read from the database
+        // list of courses
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -122,12 +178,18 @@ public class Dashboard extends AppCompatActivity {
 
                 Log.d("reach","reaching here" + dataSnapshot);
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Log.d("reach","inside for loop");
 
-//                    t1.setText(t1.getText().toString() + "," +snapshot.getValue().toString());
-                    list.add(snapshot.getKey().toString());
-                    Log.d("success", "Value is: " + snapshot.getValue().toString());
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                 for(DataSnapshot courseSnapshot: snapshot.getChildren()) {
+
+                     Log.d("reach", "inside for loop");
+//                   t1.setText(t1.getText().toString() + "," +snapshot.getValue().toString());
+                     list.add(courseSnapshot.getKey().toString());
+                     Log.d("success", "Value is: " + courseSnapshot.getValue().toString());
+                 }
+
                 }
 
                 adapter.notifyDataSetChanged() ;
@@ -183,22 +245,25 @@ public class Dashboard extends AppCompatActivity {
                 list.clear();
 
                 for (DataSnapshot snapshot : temp_dataSnapshot.getChildren()) {
-                    Log.d("reach","tempdataset");
 
-                    String tempSearchString  = searchString.getText().toString().toLowerCase();
+                    for(DataSnapshot courseSnapshot: snapshot.getChildren()) {
 
-                    if (tempSearchString != "")
-                    {
+                    Log.d("reach", "tempdataset");
 
-                        if(snapshot.getValue().toString().toLowerCase().indexOf(tempSearchString) != -1 || snapshot.getKey().toString().toLowerCase().indexOf(tempSearchString) != -1){
-                            list.add(snapshot.getKey().toString());
-                            Log.d("filtered", "Value is: " + snapshot.getValue().toString());
+                    String tempSearchString = searchString.getText().toString().toLowerCase();
+
+                    if (tempSearchString != "") {
+
+                        if (courseSnapshot.getValue().toString().toLowerCase().indexOf(tempSearchString) != -1 || courseSnapshot.getKey().toString().toLowerCase().indexOf(tempSearchString) != -1) {
+                            list.add(courseSnapshot.getKey().toString());
+                            Log.d("filtered", "Value is: " + courseSnapshot.getValue().toString());
                         }
 
-                    }else{
-                        list.add(snapshot.getKey().toString());
+                    } else {
+                        list.add(courseSnapshot.getKey().toString());
                     }
 //                    Log.d("success", "Value is: " + snapshot.getValue().toString());
+                }
                 }
 
                 adapter.notifyDataSetChanged() ;
@@ -207,25 +272,39 @@ public class Dashboard extends AppCompatActivity {
         });
 
 
-
-
-//        myRef.setValue("Hello, World!");
-
-
-//        Intent ob = getIntent();
-//
-//        t1.setText(ob.getStringExtra("name"));
-//
-//        byte[] mBytes = ob.getByteArrayExtra("image");
-//
-//        Bitmap bitmap = BitmapFactory.decodeByteArray(mBytes,0,mBytes.length);
+//        selectDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 //
 //
-//        img.setImageBitmap(bitmap);
+//                departmentSelected = departmentsList.get(position);
+//
+//                Log.d("tempdataset",temp_dataSnapshot.toString());
+//
+//                list.clear();
+//
+//                for (DataSnapshot snapshot : temp_dataSnapshot.child(departmentSelected).getChildren()) {
+//
+//                        list.add(snapshot.getKey().toString());
+//
+//                }
+//
+//                adapter.notifyDataSetChanged() ;
+//
+//
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
 
 
 
     }
+
+
 
 
     @Override

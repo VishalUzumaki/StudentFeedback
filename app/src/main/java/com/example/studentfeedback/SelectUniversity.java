@@ -60,7 +60,7 @@ public class SelectUniversity extends AppCompatActivity {
 
         Model m =new Model();
 
-        m.setUniname("Indiana");
+        m.setUniname("Indiana University Bloomington");
         m.setImage(R.drawable.iulogo);
         m.setExtension("@iu.edu");
 
