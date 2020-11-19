@@ -185,8 +185,8 @@ public class Dashboard extends AppCompatActivity {
 
                      Log.d("reach", "inside for loop");
 //                   t1.setText(t1.getText().toString() + "," +snapshot.getValue().toString());
-                     list.add(courseSnapshot.getKey().toString());
-                     Log.d("success", "Value is: " + courseSnapshot.getValue().toString());
+                     list.add(courseSnapshot.getKey().toString()+" "+courseSnapshot.child("courseName").getValue().toString());
+                     Log.d("success", "Value is: " + courseSnapshot.child("courseName").toString());
                  }
 
                 }
@@ -221,12 +221,12 @@ public class Dashboard extends AppCompatActivity {
                     if (tempSearchString != "") {
 
                         if (courseSnapshot.getValue().toString().toLowerCase().indexOf(tempSearchString) != -1 || courseSnapshot.getKey().toString().toLowerCase().indexOf(tempSearchString) != -1) {
-                            list.add(courseSnapshot.getKey().toString());
+                            list.add(courseSnapshot.getKey().toString()+" "+courseSnapshot.child("courseName").getValue().toString());
                             Log.d("filtered", "Value is: " + courseSnapshot.getValue().toString());
                         }
 
                     } else {
-                        list.add(courseSnapshot.getKey().toString());
+                        list.add(courseSnapshot.getKey().toString()+" "+courseSnapshot.child("courseName").getValue().toString());
                     }
 //                    Log.d("success", "Value is: " + snapshot.getValue().toString());
                 }
@@ -250,27 +250,60 @@ public class Dashboard extends AppCompatActivity {
 
                 DatabaseReference departmentSpecificCourse;
 
-                departmentSpecificCourse = database.getReference().child("University").child(universityName).child(departmentSelected);
+                if(departmentSelected != "All")
+                {
+                    departmentSpecificCourse = database.getReference().child("University").child(universityName).child(departmentSelected);
 
-                departmentSpecificCourse.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    departmentSpecificCourse.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        list.clear();
+                            list.clear();
 
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                list.add(snapshot.getKey().toString());
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                list.add(snapshot.getKey().toString()+" "+snapshot.child("courseName").getValue().toString());
+                            }
+
+                            adapter.notifyDataSetChanged() ;
                         }
 
-                        adapter.notifyDataSetChanged() ;
-                    }
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            // Failed to read value
+                            Log.w("failed", "Failed to read value.", error.toException());
+                        }
+                    });
+                }
+                else{
 
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        // Failed to read value
-                        Log.w("failed", "Failed to read value.", error.toException());
-                    }
-                });
+
+                    departmentSpecificCourse =  database.getReference().child("University").child(universityName);
+
+                    departmentSpecificCourse.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            list.clear();
+
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                for(DataSnapshot courseSnapshot: snapshot.getChildren()) {
+                                    list.add(courseSnapshot.getKey().toString()+" "+courseSnapshot.child("courseName").getValue().toString());
+                                }
+                            }
+                            adapter.notifyDataSetChanged() ;
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            // Failed to read value
+                            Log.w("failed", "Failed to read value.", error.toException());
+                        }
+                    });
+
+
+                }
+
+
 
 
 
