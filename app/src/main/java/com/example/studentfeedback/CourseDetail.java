@@ -208,12 +208,19 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
                             tempData="Email Id: " + dataSnapshot.child("email").getValue().toString()+"\n";
 
+                            float course_professor_total=Float.parseFloat(dataSnapshot.child("prof_rating").child("total_ratings").getValue().toString());
+                            float course_professor_count=Float.parseFloat(dataSnapshot.child("prof_rating").child("count").getValue().toString());
+
+                            float avg_ratings_professor= course_professor_total/course_professor_count;
+
+                            tempData=tempData+"Average Professor Rating: " + String.valueOf(avg_ratings_professor)+"\n";
+
                             float course_rating_total=Float.parseFloat(dataSnapshot.child("course_rating").child("total_ratings").getValue().toString());
                             float course_rating_count=Float.parseFloat(dataSnapshot.child("course_rating").child("count").getValue().toString());
 
                             float avg_ratings= course_rating_total/course_rating_count;
 
-                            tempData=tempData+"Average course Rating: " + String.valueOf(avg_ratings)+"\n";
+                            tempData=tempData+"Average Course Rating: " + String.valueOf(avg_ratings)+"\n";
 
                             tempData=tempData+"Assignment Frequency : "+dataSnapshot.child("Assignment_freq").getValue().toString()+"\n";
 
@@ -235,7 +242,33 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
                             tempData=tempData+ "\n"+"Offered during : "+dataSnapshot.child("course_offered").getValue().toString();
 
+                            float hours_perweek_total=Float.parseFloat(dataSnapshot.child("hr_per_week").child("total_hours").getValue().toString());
+                            float hours_perweek_count=Float.parseFloat(dataSnapshot.child("hr_per_week").child("count").getValue().toString());
 
+                            float avg_hours= hours_perweek_total/hours_perweek_count;
+
+                            tempData=tempData+ "\n"+"Number of Hours Spent outside class/week : "+ String.valueOf(avg_hours);
+
+                            tempData=tempData+"\n"+"\n"+"Grade Distribution: ";
+
+
+                            float course_grade_total =  Float.parseFloat(dataSnapshot.child("grades").child("total").getValue().toString());
+
+                            for (DataSnapshot objSnapshot: dataSnapshot.child("grades").getChildren()){
+
+                                float temp_rating =  Float.parseFloat(objSnapshot.getValue().toString());
+                                float percent = (temp_rating*100)/course_grade_total;
+
+                                String tempGrade = objSnapshot.getKey().toString();
+
+                                Log.d("tempGrade",tempGrade);
+
+                                if(!tempGrade.equals("total")){
+                                    tempData = tempData + "\n"+ tempGrade +" : " +  String.valueOf(percent)+" ";
+                                }
+
+
+                            }
 
 
                             otherDescription.setText(tempData);
