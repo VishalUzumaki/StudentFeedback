@@ -91,6 +91,12 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/otherDescription"
+            android:layout_width="match_parent"
+            android:layout_height="272dp"
+            android:text="Select  Professor ..." />
+
         <Button
             android:id="@+id/addReview"
             android:layout_width="match_parent"

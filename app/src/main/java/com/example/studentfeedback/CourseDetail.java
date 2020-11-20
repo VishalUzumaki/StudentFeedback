@@ -22,9 +22,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CourseDetail extends AppCompatActivity {
+public class CourseDetail extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private TextView courseName,description,syllabus,standings;
+    private TextView courseName,description,syllabus,standings,otherDescription;
 
 
     private String universityName="";
@@ -36,7 +36,9 @@ public class CourseDetail extends AppCompatActivity {
 
     private Button addReview;
 
+    private List<String> professorList;
 
+    private FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +52,11 @@ public class CourseDetail extends AppCompatActivity {
 
         selectProfessor =  (Spinner) findViewById(R.id.professorSpinner);
 
-        final List<String> professorList =  new ArrayList<String>();
+        professorList =  new ArrayList<String>();
+        professorList.add(" ");
 
+
+        otherDescription = findViewById(R.id.otherDescription);
 
 
         addReview = findViewById(R.id.addReview);
@@ -78,7 +83,7 @@ public class CourseDetail extends AppCompatActivity {
         courseName.setText(departmentSelected+" "+courseHeader);
 
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+         database = FirebaseDatabase.getInstance();
 
         DatabaseReference subjectRef = database.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle);
 
@@ -93,6 +98,8 @@ public class CourseDetail extends AppCompatActivity {
                     syllabus.setText(dataSnapshot.child("syllabus").getValue().toString());
 
                     professorList.clear();
+
+                    professorList.add("");
 
                     for (DataSnapshot objSnapshot: dataSnapshot.child("professor").getChildren()) {
                         professorList.add(objSnapshot.getKey().toString());
@@ -155,46 +162,7 @@ public class CourseDetail extends AppCompatActivity {
         selectProfessor.setAdapter(professorNameAdapter);
 
 
-        selectProfessor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                Toast.makeText(CourseDetail.this,"selected",Toast.LENGTH_LONG).show();
-
-//                professorSelected  = professorList.get(position);
-//
-//
-//                Log.d("Selected",professorSelected);
-//
-//
-//                DatabaseReference professorSpecificCourse;
-//
-//                professorSpecificCourse = database.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle).child(professorSelected);
-//
-//                professorSpecificCourse.addValueEventListener(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                            Log.d("professor",dataSnapshot.toString());
-//
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(DatabaseError error) {
-//                            // Failed to read value
-//                            Log.w("failed", "Failed to read value.", error.toException());
-//                        }
-//
-//                });
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        selectProfessor.setOnItemSelectedListener(CourseDetail.this);
 
         addReview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,5 +179,72 @@ public class CourseDetail extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.d("professor","selected");
+//        Toast.makeText(CourseDetail.this,"selected",Toast.LENGTH_LONG).show();
+
+
+                professorSelected  = professorList.get(position);
+
+                if(position!=0){
+                    Log.d("Selected",professorSelected);
+
+                    DatabaseReference professorSpecificCourse;
+
+                    professorSpecificCourse = database.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle).child("professor").child(professorSelected);
+
+                    professorSpecificCourse.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            Log.d("professor",dataSnapshot.toString());
+
+
+                            String tempData="";
+
+                            tempData="Assignment Frequency "+dataSnapshot.child("Assignment_freq").getValue().toString()+"\n";
+
+                            tempData=tempData+ "Course Structure ";
+
+                            Log.d("test",dataSnapshot.child("PQE").toString());
+
+                            for (DataSnapshot objSnapshot: dataSnapshot.child("PQE").getChildren()) {
+                                if(objSnapshot.getValue().toString()=="True"){
+                                 tempData = tempData +  objSnapshot.getKey().toString() +" ";
+                                }
+                            }
+
+                            tempData=tempData+ "\n"+"Terms this course if offered ";
+
+//                            for (DataSnapshot objSnapshot: dataSnapshot.getChildren()) {
+//                                    Log.d("data",objSnapshot.toString());
+//                                    tempData = tempData +  objSnapshot.getValue().toString() +" ";
+//                            }
+
+
+                            otherDescription.setText(tempData);
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            // Failed to read value
+                            Log.w("failed", "Failed to read value.", error.toException());
+                        }
+
+                    });
+                }
+
+
+
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        Toast.makeText(CourseDetail.this,"not selected",Toast.LENGTH_LONG).show();
     }
 }
