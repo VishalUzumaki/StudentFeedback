@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -27,6 +28,8 @@ public class IndividualComment extends AppCompatActivity {
 
     private FirebaseDatabase database;
 
+    private Integer upvoteRank,downvoteRank,strikeRank;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,19 +50,56 @@ public class IndividualComment extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
 
-        DatabaseReference commentRef = database.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle).child("comments").child(commentId);
+        final DatabaseReference commentRef = database.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle).child("comments").child(commentId);
+
+
 
         commentRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                description.setText(dataSnapshot.child("text").getValue().toString());
+                String temp_descripton =dataSnapshot.child("text").getValue().toString()+"\n\n";
+                temp_descripton=temp_descripton+ "Upvote : "+dataSnapshot.child("upvote").getValue().toString() + "  |  Downvote : "+ dataSnapshot.child("downvote").getValue().toString();
+
+                description.setText(temp_descripton);
+
+                upvoteRank = Integer.parseInt(dataSnapshot.child("upvote").getValue().toString());
+                downvoteRank = Integer.parseInt(dataSnapshot.child("downvote").getValue().toString());
+                strikeRank = Integer.parseInt(dataSnapshot.child("strike").getValue().toString());
+
+//                upvote.setText("Upvote");
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+
+
+
+        upvote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                upvoteRank=upvoteRank+1;
+                commentRef.child("upvote").setValue(String.valueOf(upvoteRank) );
+            }
+        });
+
+        downvote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downvoteRank=downvoteRank+1;
+                commentRef.child("downvote").setValue(String.valueOf(downvoteRank) );
+            }
+        });
+
+        report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                strikeRank=strikeRank+1;
+                commentRef.child("strike").setValue(String.valueOf(strikeRank) );
             }
         });
 
