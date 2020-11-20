@@ -19,10 +19,26 @@
         <TextView
             android:id="@+id/courseName"
             android:layout_width="match_parent"
-            android:layout_height="190dp"
+            android:layout_height="94dp"
+            android:background="#3D50BF"
             android:text="Course Name"
             android:textAlignment="center"
+            android:textColor="@android:color/white"
             android:textSize="30sp" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
+            app:srcCompat="@android:drawable/screen_background_light" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="24sp"
+            tools:text="Description" />
 
         <TextView
             android:id="@+id/description"
@@ -31,10 +47,30 @@
             android:text="TextView" />
 
         <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Syllabus"
+            android:textSize="24sp" />
+
+        <TextView
             android:id="@+id/syllabus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Standings"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/standings"
+            android:layout_width="441dp"
+            android:layout_height="wrap_content"
+            android:text="Standings" />
 
         <Button
             android:id="@+id/addReview"

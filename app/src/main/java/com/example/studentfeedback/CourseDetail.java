@@ -18,7 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class CourseDetail extends AppCompatActivity {
 
-    private TextView courseName,description,syllabus;
+    private TextView courseName,description,syllabus,standings;
 
 
     private String universityName="";
@@ -35,6 +35,7 @@ public class CourseDetail extends AppCompatActivity {
         courseName = findViewById(R.id.courseName);
         syllabus = findViewById(R.id.syllabus);
         description = findViewById(R.id.description);
+        standings = findViewById(R.id.standings);
 
         addReview = findViewById(R.id.addReview);
 
@@ -71,8 +72,41 @@ public class CourseDetail extends AppCompatActivity {
                 Log.d("reach","reaching inside the subject" + dataSnapshot);
 
                 if(dataSnapshot.getValue() != null) {
-                    description.setText("Course Description: " + dataSnapshot.child("description").getValue().toString());
-                    syllabus.setText("Overall Rating: " + dataSnapshot.child("syllabus").getValue().toString());
+                    description.setText(dataSnapshot.child("description").getValue().toString());
+                    syllabus.setText(dataSnapshot.child("syllabus").getValue().toString());
+
+//                    Extracting standings total and calculating percentage
+                    String standingsSubData="";
+
+                    Integer standingsTotal = Integer.valueOf(dataSnapshot.child("Standing").child("total").getValue().toString());
+
+                    Integer standingsFreshman = Integer.valueOf(dataSnapshot.child("Standing").child("freshman").getValue().toString());
+                    Integer standingsFreshmanPercent =(standingsFreshman*100)/standingsTotal;
+                    standingsSubData=standingsSubData+"Freshman "+standingsFreshmanPercent.toString()+"% \n";
+
+                    Integer standingsJunior = Integer.valueOf(dataSnapshot.child("Standing").child("junior").getValue().toString());
+                    Integer standingsJuniorPercent =(standingsJunior*100)/standingsTotal;
+                    standingsSubData=standingsSubData+"Junior "+standingsJuniorPercent.toString()+"% \n";
+
+                    Integer standingsSophomor = Integer.valueOf(dataSnapshot.child("Standing").child("sophomor").getValue().toString());
+                    Integer standingsSophomorPercent =(standingsSophomor*100)/standingsTotal;
+                    standingsSubData=standingsSubData+"Sophomor "+standingsSophomorPercent.toString()+"% \n";
+
+                    Integer standingsSenior = Integer.valueOf(dataSnapshot.child("Standing").child("senior").getValue().toString());
+                    Integer standingsSeniorPercent =(standingsSenior*100)/standingsTotal;
+                    standingsSubData=standingsSubData+"Senior "+standingsSeniorPercent.toString()+"% \n";
+
+                    Integer standingsMasters = Integer.valueOf(dataSnapshot.child("Standing").child("masters").getValue().toString());
+                    Integer standingsMastersPercent =(standingsMasters*100)/standingsTotal;
+                    standingsSubData=standingsSubData+"Masters "+standingsMastersPercent.toString()+"% \n";
+
+                    Integer standingsPHD = Integer.valueOf(dataSnapshot.child("Standing").child("phd").getValue().toString());
+                    Integer standingsPHDPercent =(standingsPHD*100)/standingsTotal;
+                    standingsSubData=standingsSubData+"PHD "+standingsPHDPercent.toString()+"% \n";
+
+                    standings.setText(standingsSubData);
+
+
                 }
                 else{
                     Toast.makeText(CourseDetail.this,"Incosistent Data present for this course ",Toast.LENGTH_LONG).show();
