@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +19,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CourseDetail extends AppCompatActivity {
 
     private TextView courseName,description,syllabus,standings;
@@ -24,8 +30,13 @@ public class CourseDetail extends AppCompatActivity {
     private String universityName="";
     private String courseTitle="";
     private String departmentSelected="";
+    private String professorSelected = "";
+
+    private Spinner selectProfessor;
 
     private Button addReview;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +47,12 @@ public class CourseDetail extends AppCompatActivity {
         syllabus = findViewById(R.id.syllabus);
         description = findViewById(R.id.description);
         standings = findViewById(R.id.standings);
+
+        selectProfessor =  (Spinner) findViewById(R.id.professorSpinner);
+
+        final List<String> professorList =  new ArrayList<String>();
+
+
 
         addReview = findViewById(R.id.addReview);
 
@@ -75,6 +92,14 @@ public class CourseDetail extends AppCompatActivity {
                     description.setText(dataSnapshot.child("description").getValue().toString());
                     syllabus.setText(dataSnapshot.child("syllabus").getValue().toString());
 
+                    professorList.clear();
+
+                    for (DataSnapshot objSnapshot: dataSnapshot.child("professor").getChildren()) {
+                        professorList.add(objSnapshot.getKey().toString());
+                    }
+
+
+
 //                    Extracting standings total and calculating percentage
                     String standingsSubData="";
 
@@ -109,7 +134,7 @@ public class CourseDetail extends AppCompatActivity {
 
                 }
                 else{
-                    Toast.makeText(CourseDetail.this,"Incosistent Data present for this course ",Toast.LENGTH_LONG).show();
+                    Toast.makeText(CourseDetail.this,"Inconsistent Data present for this course ",Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -121,6 +146,55 @@ public class CourseDetail extends AppCompatActivity {
             }
         });
 
+
+        final ArrayAdapter<String> professorNameAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, professorList);
+
+
+        professorNameAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        selectProfessor.setAdapter(professorNameAdapter);
+
+
+        selectProfessor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                Toast.makeText(CourseDetail.this,"selected",Toast.LENGTH_LONG).show();
+
+//                professorSelected  = professorList.get(position);
+//
+//
+//                Log.d("Selected",professorSelected);
+//
+//
+//                DatabaseReference professorSpecificCourse;
+//
+//                professorSpecificCourse = database.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle).child(professorSelected);
+//
+//                professorSpecificCourse.addValueEventListener(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                            Log.d("professor",dataSnapshot.toString());
+//
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError error) {
+//                            // Failed to read value
+//                            Log.w("failed", "Failed to read value.", error.toException());
+//                        }
+//
+//                });
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         addReview.setOnClickListener(new View.OnClickListener() {
             @Override
