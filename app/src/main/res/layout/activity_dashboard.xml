@@ -28,6 +28,14 @@
             android:hint="Algorithm,Medium, etc "
             tools:ignore="MissingConstraints" />
 
+
+        <Spinner
+            android:id="@+id/departmentSelected"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        />
+
+
         <Button
             android:id="@+id/searchButton"
             android:layout_width="118dp"

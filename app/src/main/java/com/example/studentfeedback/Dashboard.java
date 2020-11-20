@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.TestLooperManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.nio.channels.InterruptedByTimeoutException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -46,7 +49,12 @@ public class Dashboard extends AppCompatActivity {
 
     private  String universityName = "";
 
+
     private DataSnapshot temp_dataSnapshot;
+
+    private Spinner selectDepartment;
+
+    private String departmentSelected="";
 
 
     @SuppressLint("WrongViewCast")
@@ -54,9 +62,16 @@ public class Dashboard extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
         authObj = FirebaseAuth.getInstance();
+
         logout = findViewById(R.id.logout);
+
         searchButton = findViewById(R.id.searchButton);
+
+//        Spinner for filtering department
+        selectDepartment =  (Spinner) findViewById(R.id.departmentSelected);
+
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +89,13 @@ public class Dashboard extends AppCompatActivity {
         universityName=uniName.getStringExtra("name");
 
         final ArrayList<String> list = new ArrayList<>();
+
+//         this value will be useful for the course details page to get the department name if All is selected
+        final ArrayList<String> placeholderforDepartmentName = new ArrayList<>();
+
+
         final ArrayAdapter adapter= new ArrayAdapter(this, R.layout.course_list_item,list);
+
 
         coursesList.setAdapter(adapter);
 
@@ -90,6 +111,16 @@ public class Dashboard extends AppCompatActivity {
 
 
                 openCourseDetails.putExtra("universityName", universityName);
+
+                Log.d("placeholder","for department|"+placeholderforDepartmentName.toString());
+
+                if(departmentSelected == "All"){
+                    openCourseDetails.putExtra("departmentSelected",placeholderforDepartmentName.get(i));
+                }
+                else{
+                    openCourseDetails.putExtra("departmentSelected",departmentSelected);
+                }
+
                 openCourseDetails.putExtra("courseName",list.get(i));
 
 
@@ -100,18 +131,58 @@ public class Dashboard extends AppCompatActivity {
 
 //        getting University Name for course search
 
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("University").child(universityName);
+        DatabaseReference departmentNames = database.getReference().child("University").child(universityName);
 
+        Log.d("test",departmentNames.toString());
+
+        final List<String> departmentsList = new ArrayList<String>();
+
+        departmentsList.add("All"); //This is for All
+
+
+        departmentNames.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot objSnapshot: snapshot.getChildren()) {
+
+                    Log.d("test","data"+objSnapshot.getKey().toString());
+
+                    departmentsList.add(objSnapshot.getKey().toString());
+
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError firebaseError) {
+                Log.e("Read failed", firebaseError.getMessage());
+            }
+        });
+
+
+        ArrayAdapter<String> departmentNameAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, departmentsList);
+
+
+        departmentNameAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        selectDepartment.setAdapter(departmentNameAdapter);
+
+        DatabaseReference myRef;
+//      this is the reference of university name from where we will get list of subject names
+        myRef = database.getReference().child("University").child(universityName);
+
+
+
+//        if(departmentSelected == "") {
+//
+//        }
+//        else{
+//          myRef = database.getReference().child("University").child(universityName).child(departmentSelected);
+//        }
 
         searchString=findViewById(R.id.search);
 
-
-
-//        searchString.setText(universityName.toString());
-
-        // Read from the database
+        // list of courses
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -120,14 +191,25 @@ public class Dashboard extends AppCompatActivity {
 
                 list.clear();
 
+                placeholderforDepartmentName.clear();
+
                 Log.d("reach","reaching here" + dataSnapshot);
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Log.d("reach","inside for loop");
 
-//                    t1.setText(t1.getText().toString() + "," +snapshot.getValue().toString());
-                    list.add(snapshot.getKey().toString());
-                    Log.d("success", "Value is: " + snapshot.getValue().toString());
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                 String departmentPlaceHolder = snapshot.getKey().toString();
+
+                 for(DataSnapshot courseSnapshot: snapshot.getChildren()) {
+
+                     placeholderforDepartmentName.add(departmentPlaceHolder);
+
+                     Log.d("reach", "inside for loop");
+//                   t1.setText(t1.getText().toString() + "," +snapshot.getValue().toString());
+                     list.add(courseSnapshot.getKey().toString()+" "+courseSnapshot.child("courseName").getValue().toString());
+                     Log.d("success", "Value is: " + courseSnapshot.child("courseName").toString());
+                 }
+
                 }
 
                 adapter.notifyDataSetChanged() ;
@@ -141,64 +223,40 @@ public class Dashboard extends AppCompatActivity {
         });
 
 
-//        searchString.setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-//
-//                Log.d("tempdataset",temp_dataSnapshot.toString());
-//
-//                list.clear();
-//
-//                for (DataSnapshot snapshot : temp_dataSnapshot.getChildren()) {
-//                    Log.d("reach","tempdataset");
-//
-//                    String tempSearchString  = searchString.getText().toString();
-//
-//                    if (tempSearchString != "")
-//                    {
-//
-//                        if(snapshot.getValue().toString().indexOf(tempSearchString) != -1){
-//                            list.add(snapshot.getKey().toString());
-//                            Log.d("filtered", "Value is: " + snapshot.getValue().toString());
-//                        }
-//
-//                    }else{
-//                        list.add(snapshot.getKey().toString());
-//                    }
-////                    Log.d("success", "Value is: " + snapshot.getValue().toString());
-//                }
-//
-//                adapter.notifyDataSetChanged() ;
-//
-//                return true;
-//            }
-//        });
-
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d("tempdataset",temp_dataSnapshot.toString());
 
+                placeholderforDepartmentName.clear();
+
                 list.clear();
 
                 for (DataSnapshot snapshot : temp_dataSnapshot.getChildren()) {
-                    Log.d("reach","tempdataset");
 
-                    String tempSearchString  = searchString.getText().toString().toLowerCase();
+                    String departmentPlaceHolder = snapshot.getKey().toString();
 
-                    if (tempSearchString != "")
-                    {
+                    for(DataSnapshot courseSnapshot: snapshot.getChildren()) {
 
-                        if(snapshot.getValue().toString().toLowerCase().indexOf(tempSearchString) != -1 || snapshot.getKey().toString().toLowerCase().indexOf(tempSearchString) != -1){
-                            list.add(snapshot.getKey().toString());
-                            Log.d("filtered", "Value is: " + snapshot.getValue().toString());
+                        placeholderforDepartmentName.add(departmentPlaceHolder);
+
+                        Log.d("reach", "tempdataset");
+
+                        String tempSearchString = searchString.getText().toString().toLowerCase();
+
+                        if (tempSearchString != "") {
+
+                            if (courseSnapshot.getValue().toString().toLowerCase().indexOf(tempSearchString) != -1 || courseSnapshot.getKey().toString().toLowerCase().indexOf(tempSearchString) != -1) {
+                                list.add(courseSnapshot.getKey().toString()+" "+courseSnapshot.child("courseName").getValue().toString());
+                                Log.d("filtered", "Value is: " + courseSnapshot.getValue().toString());
+                            }
+
+                        } else {
+                            list.add(courseSnapshot.getKey().toString()+" "+courseSnapshot.child("courseName").getValue().toString());
                         }
-
-                    }else{
-                        list.add(snapshot.getKey().toString());
+    //                    Log.d("success", "Value is: " + snapshot.getValue().toString());
                     }
-//                    Log.d("success", "Value is: " + snapshot.getValue().toString());
                 }
 
                 adapter.notifyDataSetChanged() ;
@@ -207,25 +265,98 @@ public class Dashboard extends AppCompatActivity {
         });
 
 
+        selectDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                departmentSelected = departmentsList.get(position);
 
 
-//        myRef.setValue("Hello, World!");
+                Log.d("departmentSelected",departmentSelected);
 
 
-//        Intent ob = getIntent();
-//
-//        t1.setText(ob.getStringExtra("name"));
-//
-//        byte[] mBytes = ob.getByteArrayExtra("image");
-//
-//        Bitmap bitmap = BitmapFactory.decodeByteArray(mBytes,0,mBytes.length);
-//
-//
-//        img.setImageBitmap(bitmap);
+                DatabaseReference departmentSpecificCourse;
+
+                if(departmentSelected != "All")
+                {
+                    departmentSpecificCourse = database.getReference().child("University").child(universityName).child(departmentSelected);
+
+
+
+                    departmentSpecificCourse.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+//                            temp_dataSnapshot = dataSnapshot;
+
+                            list.clear();
+
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                list.add(snapshot.getKey().toString()+" "+snapshot.child("courseName").getValue().toString());
+                            }
+
+                            adapter.notifyDataSetChanged() ;
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            // Failed to read value
+                            Log.w("failed", "Failed to read value.", error.toException());
+                        }
+                    });
+                }
+                else{
+
+
+                    departmentSpecificCourse =  database.getReference().child("University").child(universityName);
+
+
+                    departmentSpecificCourse.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+//                            temp_dataSnapshot = dataSnapshot;
+
+                            list.clear();
+
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                for(DataSnapshot courseSnapshot: snapshot.getChildren()) {
+                                    list.add(courseSnapshot.getKey().toString()+" "+courseSnapshot.child("courseName").getValue().toString());
+                                }
+                            }
+                            adapter.notifyDataSetChanged() ;
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            // Failed to read value
+                            Log.w("failed", "Failed to read value.", error.toException());
+                        }
+                    });
+
+
+                }
+
+
+
+
+
+                adapter.notifyDataSetChanged() ;
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
 
     }
+
+
 
 
     @Override
