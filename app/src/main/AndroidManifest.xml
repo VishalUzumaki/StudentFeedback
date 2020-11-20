@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppThemeNo">
+        android:theme="@style/MatTheme">
         <activity android:name=".CourseSurvey"></activity>
         <activity android:name=".CourseDetail" />
         <activity android:name=".SelectUniversity"/>
@@ -16,8 +16,7 @@
         <activity android:name=".Dashboard" />
         <activity android:name=".Login" />
         <activity
-            android:name=".ui.login.LoginActivity"
-            android:label="@string/title_activity_login" />
+            android:name=".ui.login.LoginActivity" />
         <activity
             android:name=".SplashScreen">
             <intent-filter>
