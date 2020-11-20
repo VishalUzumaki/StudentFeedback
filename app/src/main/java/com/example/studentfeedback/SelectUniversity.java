@@ -1,6 +1,7 @@
 package com.example.studentfeedback;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -60,7 +61,7 @@ public class SelectUniversity extends AppCompatActivity {
 
         Model m =new Model();
 
-        m.setUniname("Indiana");
+        m.setUniname("Indiana University Bloomington");
         m.setImage(R.drawable.iulogo);
         m.setExtension("@iu.edu");
 
@@ -69,7 +70,7 @@ public class SelectUniversity extends AppCompatActivity {
 
         m =new Model();
 
-        m.setUniname("NYU");
+        m.setUniname("New York University");
         m.setImage(R.drawable.nyu);
         m.setExtension("@nyu.edu");
 
@@ -77,7 +78,7 @@ public class SelectUniversity extends AppCompatActivity {
 
         m =new Model();
 
-        m.setUniname("PSU");
+        m.setUniname("Pennsylvania State University");
         m.setImage(R.drawable.penn);
         m.setExtension("@psu.edu");
 
