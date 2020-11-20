@@ -9,16 +9,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MatTheme">
-        <activity android:name=".CourseSurvey"></activity>
+        <activity android:name=".IndividualComment"></activity>
+        <activity android:name=".AllComments" />
+        <activity android:name=".CourseSurvey" />
         <activity android:name=".CourseDetail" />
-        <activity android:name=".SelectUniversity"/>
+        <activity android:name=".SelectUniversity" />
         <activity android:name=".SignupPage" />
         <activity android:name=".Dashboard" />
         <activity android:name=".Login" />
-        <activity
-            android:name=".ui.login.LoginActivity" />
-        <activity
-            android:name=".SplashScreen">
+        <activity android:name=".ui.login.LoginActivity" />
+        <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

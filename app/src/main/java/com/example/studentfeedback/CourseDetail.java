@@ -34,7 +34,7 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
     private Spinner selectProfessor;
 
-    private Button addReview;
+    private Button addReview,allComments;
 
     private List<String> professorList;
 
@@ -57,6 +57,9 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
 
         otherDescription = findViewById(R.id.otherDescription);
+
+
+        allComments = findViewById(R.id.allcomments);
 
 
         addReview = findViewById(R.id.addReview);
@@ -163,6 +166,20 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
 
         selectProfessor.setOnItemSelectedListener(CourseDetail.this);
+
+
+        allComments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent object = new Intent(CourseDetail.this,AllComments.class);
+
+                object.putExtra("University",universityName);
+                object.putExtra("Department",departmentSelected);
+                object.putExtra("CourseName",courseTitle);
+
+                startActivity(object);
+            }
+        });
 
         addReview.setOnClickListener(new View.OnClickListener() {
             @Override
