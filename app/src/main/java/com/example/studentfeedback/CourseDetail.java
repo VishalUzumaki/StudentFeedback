@@ -203,26 +203,39 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
                             Log.d("professor",dataSnapshot.toString());
 
 
+
                             String tempData="";
 
-                            tempData="Assignment Frequency "+dataSnapshot.child("Assignment_freq").getValue().toString()+"\n";
+                            tempData="Email Id: " + dataSnapshot.child("email").getValue().toString()+"\n";
+
+                            float course_rating_total=Float.parseFloat(dataSnapshot.child("course_rating").child("total_ratings").getValue().toString());
+                            float course_rating_count=Float.parseFloat(dataSnapshot.child("course_rating").child("count").getValue().toString());
+
+                            float avg_ratings= course_rating_total/course_rating_count;
+
+                            tempData=tempData+"Average course Rating: " + String.valueOf(avg_ratings)+"\n";
+
+                            tempData=tempData+"Assignment Frequency : "+dataSnapshot.child("Assignment_freq").getValue().toString()+"\n";
 
                             tempData=tempData+ "Course Structure ";
 
                             Log.d("test",dataSnapshot.child("PQE").toString());
 
-                            for (DataSnapshot objSnapshot: dataSnapshot.child("PQE").getChildren()) {
-                                if(objSnapshot.getValue().toString()=="True"){
-                                 tempData = tempData +  objSnapshot.getKey().toString() +" ";
-                                }
+                            Log.d("pqe",dataSnapshot.child("PQE").getValue().toString());
+
+                            for (DataSnapshot objSnapshot: dataSnapshot.child("PQE").getChildren()){
+                                Log.d("inside",objSnapshot.getValue().toString());
+//                                if (objSnapshot.getValue().toString() == "yes" || objSnapshot.getValue().toString() == "True" ) {
+                                    tempData = tempData + objSnapshot.getKey().toString() +" : "+objSnapshot.getValue().toString() + " ";
+//                                }
+//                                else{
+//                                    tempData = tempData + "Nope" + " ";
+//                                }
                             }
 
-                            tempData=tempData+ "\n"+"Terms this course if offered ";
+                            tempData=tempData+ "\n"+"Offered during : "+dataSnapshot.child("course_offered").getValue().toString();
 
-//                            for (DataSnapshot objSnapshot: dataSnapshot.getChildren()) {
-//                                    Log.d("data",objSnapshot.toString());
-//                                    tempData = tempData +  objSnapshot.getValue().toString() +" ";
-//                            }
+
 
 
                             otherDescription.setText(tempData);
