@@ -18,11 +18,13 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:paddingEnd="20dp"
+            android:id="@+id/appBar_cs"
+            android:paddingEnd="15dp"
             app:menu="@menu/iconsbars"
             android:minHeight="?attr/actionBarSize"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/back_arrow"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:titleTextColor="@android:color/white"
             android:background="?attr/colorPrimaryDark">

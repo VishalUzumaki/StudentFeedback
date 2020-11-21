@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,6 +19,7 @@ public class SelectUniversity extends AppCompatActivity {
     RecyclerView universityNames;
     UniNameAdapter uniNameAdapter;
     private FirebaseAuth authObj;
+    SharedPreferences settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +32,6 @@ public class SelectUniversity extends AppCompatActivity {
         universityNames.setLayoutManager(new LinearLayoutManager(this));
 
         uniNameAdapter = new UniNameAdapter( SelectUniversity.this,getNamesList());
-
         universityNames.setAdapter(uniNameAdapter);
 
     }
@@ -45,11 +46,10 @@ public class SelectUniversity extends AppCompatActivity {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
             String uniName=pref.getString("University", null);
 
-            Intent openDashboard = new Intent(SelectUniversity.this, CourseSearch.class);
-
+            Intent openDashboard = new Intent(SelectUniversity.this, options.class);
             openDashboard.putExtra("name",uniName);
-
             startActivity(openDashboard);
+            finish();
         }
 
     }

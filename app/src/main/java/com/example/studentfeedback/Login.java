@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -35,7 +36,6 @@ public class Login extends AppCompatActivity {
     private byte[] mBytes;
 
     ProgressDialog progressDialog;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,43 +76,33 @@ public class Login extends AppCompatActivity {
                 }
                 else if(password.getText().toString().equals(""))
                 {
-                    password.setError("Password cannot be empty");
+                    passT.setError("Password cannot be empty");
                 }
                 else
                 {
-                    login();
                     progressDialog.show();
+                    login();
                 }
             }
         });
 
         authObj = FirebaseAuth.getInstance();
 
-
         Intent ob = getIntent();
-
         extensionDomain=ob.getStringExtra("extension");
         UniversityName=ob.getStringExtra("name");
-
-//        t1.setText(ob.getStringExtra("name"));
-
         mBytes = ob.getByteArrayExtra("image");
 
         Bitmap bitmap = BitmapFactory.decodeByteArray(mBytes,0,mBytes.length);
-
-
         imageView.setImageBitmap(bitmap);
 
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
                 Intent intent = new Intent(Login.this, SignupPage.class);
                 intent.putExtra("name",UniversityName);
                 intent.putExtra("extension",extensionDomain);
                 intent.putExtra("image",mBytes);
-
                 startActivity(intent);
             }
         });
@@ -121,22 +111,22 @@ public class Login extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = authObj.getCurrentUser();
-
-        if (currentUser != null) {
-            Intent openDashboard = new Intent(Login.this, CourseSearch.class);
-            openDashboard.putExtra("name",UniversityName);
-            startActivity(openDashboard);
-        }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        FirebaseUser currentUser = authObj.getCurrentUser();
+//
+//        if (currentUser != null) {
+//            Intent openDashboard = new Intent(Login.this, options.class);
+//            openDashboard.putExtra("name",UniversityName);
+//            startActivity(openDashboard);
+//        }
 
 //         if user is already logged in
-    }
+//    }
 
     protected void login() {
-        String email_credential = username.getText().toString()+extensionDomain;
+        final String email_credential = username.getText().toString() + extensionDomain;
         String password_credential = password.getText().toString();
 
         authObj.signInWithEmailAndPassword(email_credential, password_credential)
@@ -145,9 +135,10 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.w("Success", "successlogin");
-                            Intent openDashboard = new Intent(Login.this, CourseSearch.class);
+                            Intent openDashboard = new Intent(Login.this, options.class);
                             openDashboard.putExtra("name",UniversityName);
                             startActivity(openDashboard);
+                            finish();
                         } else {
                             progressDialog.dismiss();
                             Log.w("Fail", "error", task.getException());
@@ -155,7 +146,5 @@ public class Login extends AppCompatActivity {
                         }
                     }
                 });
-
-
     }
 }
