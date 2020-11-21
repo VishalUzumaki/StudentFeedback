@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        android:textAlignment="center"
         app:titleTextColor="@android:color/white"
         android:background="?attr/colorPrimaryDark">
 
@@ -26,7 +25,7 @@
             android:text="Select Your University"
             android:textColor="@android:color/white"
             style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-            android:textAlignment="center" />
+            android:textAlignment="textStart" />
 
     </androidx.appcompat.widget.Toolbar>
 

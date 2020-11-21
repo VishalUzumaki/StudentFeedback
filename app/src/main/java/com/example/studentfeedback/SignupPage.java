@@ -3,6 +3,7 @@ package com.example.studentfeedback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,6 +34,7 @@ public class SignupPage extends AppCompatActivity {
     private String UniversityName ="";
     private byte[] mBytes;
 
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,54 +49,54 @@ public class SignupPage extends AppCompatActivity {
         signup= findViewById(R.id.signup);
         back = findViewById(R.id.extended_fab);
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(SignupPage.this, Login.class);
-                startActivity(in);
-            }
-        });
-
-
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Authentication");
+        progressDialog.setProgress(10);
+        progressDialog.setMax(100);
+        progressDialog.setMessage("Validating User...");
 
         Intent ob = getIntent();
 
         extensionDomain=ob.getStringExtra("extension");
         UniversityName=ob.getStringExtra("name");
-
-//        t1.setText(ob.getStringExtra("name"));
-
         mBytes = ob.getByteArrayExtra("image");
 
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(SignupPage.this, Login.class);
+                in.putExtra("name",UniversityName);
+                in.putExtra("extension",extensionDomain);
+                in.putExtra("image",mBytes);
+                startActivity(in);
+            }
+        });
+
         Bitmap bitmap = BitmapFactory.decodeByteArray(mBytes,0,mBytes.length);
-
-
         imageView.setImageBitmap(bitmap);
 
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressDialog.show();
                 signup();
             }
         });
-
-
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        if (currentUser != null) {
-            Intent openDashboard = new Intent(SignupPage.this, CourseSearch.class);
-            openDashboard.putExtra("name",UniversityName);
-            startActivity(openDashboard);
-
-        }
-
-//         if user is already logged in
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//
+//        // if user is already logged in
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//
+//        if (currentUser != null) {
+//            Intent openDashboard = new Intent(SignupPage.this, CourseSearch.class);
+//            openDashboard.putExtra("name",UniversityName);
+//            startActivity(openDashboard);
+//        }
+//    }
 
 
 
@@ -110,20 +112,20 @@ public class SignupPage extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("success", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(SignupPage.this, CourseSearch.class));
+                            Intent in = new Intent(SignupPage.this, Login.class);
+                            in.putExtra("name",UniversityName);
+                            startActivity(in);
+                            //startActivity(new Intent(SignupPage.this, CourseSearch.class));
+                            Toast.makeText(SignupPage.this, "Registration Successful.",
+                                    Toast.LENGTH_LONG).show();
                         } else {
+                            progressDialog.dismiss();
                             // If sign in fails, display a message to the user.
                             Log.w("failed", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(SignupPage.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignupPage.this, "Registration failed.",
+                                    Toast.LENGTH_LONG).show();
                         }
-
-                        // ...
                     }
                 });
-
-
     }
-
-
 }

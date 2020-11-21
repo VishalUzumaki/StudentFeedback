@@ -2,6 +2,7 @@ package com.example.studentfeedback;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.ActionMenuItemView;
+import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -41,6 +42,7 @@ public class CourseSearch extends AppCompatActivity {
     private Spinner selectDepartment;
     private String departmentSelected="";
     ActionMenuItemView logout;
+    Toolbar toolbar;
 
 
     @SuppressLint("WrongViewCast")
@@ -52,12 +54,23 @@ public class CourseSearch extends AppCompatActivity {
         authObj = FirebaseAuth.getInstance();
 
         logout = findViewById(R.id.logout);
-
         searchButton = findViewById(R.id.searchButton);
-
-//        Spinner for filtering department
+        // Spinner for filtering department
         selectDepartment =  (Spinner) findViewById(R.id.departmentSelected);
+        toolbar = findViewById(R.id.appBar_cs);
+        coursesList = findViewById(R.id.coursesList);
 
+        Intent uniName = getIntent();
+        universityName=uniName.getStringExtra("name");
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(getApplicationContext(), options.class);
+                in.putExtra("name",universityName);
+                startActivity(in);
+            }
+        });
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,31 +79,16 @@ public class CourseSearch extends AppCompatActivity {
             }
         });
 
-
-        coursesList = findViewById(R.id.coursesList);
-
-
-        Intent uniName = getIntent();
-
-        universityName=uniName.getStringExtra("name");
-
         final ArrayList<String> list = new ArrayList<>();
-
-//         this value will be useful for the course details page to get the department name if All is selected
+        // this value will be useful for the course details page to get the department name if All is selected
         final ArrayList<String> placeholderforDepartmentName = new ArrayList<>();
-
-
         final ArrayAdapter adapter= new ArrayAdapter(this, R.layout.course_list_item, R.id.label, list);
-
-
         coursesList.setAdapter(adapter);
 
         coursesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-//                Toast.makeText(CourseSearch.this,"clicked item "+list.get(i),Toast.LENGTH_LONG).show();
-
+                // Toast.makeText(CourseSearch.this,"clicked item "+list.get(i),Toast.LENGTH_LONG).show();
                 Intent openCourseDetails = new Intent(CourseSearch.this,CourseDetail.class);
                 openCourseDetails.putExtra("universityName", universityName);
 
@@ -110,8 +108,7 @@ public class CourseSearch extends AppCompatActivity {
             }
         });
 
-//        getting University Name for course search
-
+        //        getting University Name for course search
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference departmentNames = database.getReference().child("University").child(universityName);
         Log.d("test",departmentNames.toString());
@@ -336,14 +333,14 @@ public class CourseSearch extends AppCompatActivity {
 
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = authObj.getCurrentUser();
-
-        if(currentUser == null){
-            startActivity(new Intent(CourseSearch.this, SelectUniversity.class));
-        }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        FirebaseUser currentUser = authObj.getCurrentUser();
+//
+//        if(currentUser == null){
+//            startActivity(new Intent(CourseSearch.this, SelectUniversity.class));
+//        }
 
 
 //        if (currentUser != null) {
@@ -351,12 +348,13 @@ public class CourseSearch extends AppCompatActivity {
 //        }
 
 //         if user is already logged in
-    }
+//    }
 
 
     protected void logoutUser() {
         authObj.signOut();
         startActivity(new Intent(CourseSearch.this, SelectUniversity.class));
+        finish();
     }
 
 

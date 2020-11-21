@@ -8,7 +8,6 @@
 
     <LinearLayout
         android:background="#f5f5f5"
-        android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -17,20 +16,51 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/construction"/>
-
-        <TextView
-            android:gravity="center"
-            android:textColor="#000"
-            android:textSize="35dp"
-            android:text="Under Construction"
-            android:textStyle="bold|italic"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/appBar"
+            android:paddingEnd="20dp"
+            app:menu="@menu/iconsbars"
+            android:gravity="top"
+            android:minHeight="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:titleTextColor="@android:color/white"
+            app:navigationIcon="@drawable/back_arrow"
+            android:background="?attr/colorPrimaryDark">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:text="Course Wisdom"
+                android:textColor="@android:color/white"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title" />
+
+        </androidx.appcompat.widget.Toolbar>
+        
+        <LinearLayout
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/warning"/>
+
+            <TextView
+                android:gravity="center"
+                android:textColor="#000"
+                android:textSize="35dp"
+                android:text="Under Construction"
+                android:textStyle="bold|italic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
