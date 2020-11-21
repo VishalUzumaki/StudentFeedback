@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.renderscript.Allocation;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -49,6 +50,8 @@ public class CourseSurvey extends AppCompatActivity {
     private String tempStandings="",tempTotalStandings="";
     private Integer tempCourseRatings=0,getTempCourseRatingsTotal=0;
     private Integer tempProfessorRatings=0,getProfessorRatingsTotal=0;
+    private Integer tempCourseDifficulty=0,getCourseDifficulty=0;
+    private Integer temp_hr_weeks=0, getTemp_hr_weeks=0;
 
 
 
@@ -362,6 +365,47 @@ public class CourseSurvey extends AppCompatActivity {
 
                             Log.d("subvalues",tempProfessorRatings.toString()+" "+getProfessorRatingsTotal.toString());
 
+
+//                            course diffculty rating under professor
+
+                            Integer courseDifficultyRating=0 , courseDifficultyRatingTotal=0;
+
+                            courseDifficultyRating = Integer.parseInt(dataSnapshot.child("difficulty").child("total_diff").getValue().toString());
+                            courseDifficultyRatingTotal= Integer.parseInt(dataSnapshot.child("difficulty").child("count").getValue().toString());
+
+
+                            courseDifficultyRating=courseDifficultyRating+Integer.parseInt(finalCourseDifficulty);
+                            courseDifficultyRatingTotal=courseDifficultyRatingTotal+1;
+
+
+                            tempCourseDifficulty=courseDifficultyRating;
+                            getCourseDifficulty=courseDifficultyRatingTotal;
+
+
+                            Log.d("subvaluesdifficulty",tempCourseDifficulty.toString()+" "+getCourseDifficulty.toString());
+
+
+
+                        //           number of hours per week rating under professor
+
+                        Integer numberofhours=0 , totalHours=0;
+
+                            numberofhours = Integer.parseInt(dataSnapshot.child("hr_per_week").child("total_hours").getValue().toString());
+                            totalHours= Integer.parseInt(dataSnapshot.child("hr_per_week").child("count").getValue().toString());
+
+
+                            numberofhours=numberofhours+Integer.parseInt(hoursValue.getText().toString());
+                            totalHours=totalHours+1;
+
+                            temp_hr_weeks=numberofhours;
+                            getTemp_hr_weeks=totalHours;
+
+
+                        Log.d("subvaluesdifficulty",tempCourseDifficulty.toString()+" "+getCourseDifficulty.toString());
+
+
+
+
                         }
 
                         @Override
@@ -369,10 +413,12 @@ public class CourseSurvey extends AppCompatActivity {
 
                         }
 
+
+
                     });
 
 
-                    if(tempCourseRatings!=0 && finalCourseRating.length()>0) {
+                    if(tempCourseRatings!=0 && finalCourseRating.length()>0 ) {
                         Log.d("finalValues", tempCourseRatings.toString() + " " + getTempCourseRatingsTotal.toString());
                         reviewProfessor.child("course_rating").child("total_ratings").setValue(tempCourseRatings);
                         reviewProfessor.child("course_rating").child("count").setValue(getTempCourseRatingsTotal);
@@ -384,6 +430,15 @@ public class CourseSurvey extends AppCompatActivity {
                         reviewProfessor.child("prof_rating").child("count").setValue(getProfessorRatingsTotal);
                     }
 
+                    if(tempCourseDifficulty!=0 && finalCourseDifficulty.length()>0){
+                        reviewProfessor.child("difficulty").child("total_diff").setValue(tempCourseDifficulty);
+                        reviewProfessor.child("difficulty").child("count").setValue(getCourseDifficulty);
+                    }
+
+                    if(temp_hr_weeks!=0){
+                        reviewProfessor.child("hr_per_week").child("total_hours").setValue(temp_hr_weeks);
+                        reviewProfessor.child("hr_per_week").child("count").setValue(getTemp_hr_weeks);
+                    }
 
 
 
@@ -405,7 +460,7 @@ public class CourseSurvey extends AppCompatActivity {
 
                 Comments comment = new Comments("0","0",temp_comment,date.toString(),"0","Anonymous");
 
-//                reviewReference.push().setValue(comment);
+                reviewReference.push().setValue(comment);
 
 
 //              updating standings
@@ -488,7 +543,13 @@ public class CourseSurvey extends AppCompatActivity {
 
 
 
+                Intent objectQ = new Intent(CourseSurvey.this,CourseDetail.class);
 
+                Toast.makeText(CourseSurvey.this,"Review posted",Toast.LENGTH_LONG).show();
+
+
+
+//                startActivity(objectQ);
             }
 
 
