@@ -325,129 +325,31 @@ public class CourseSurvey extends AppCompatActivity {
 
 
                 if(finalProfessor.length()>0){
+
                     DatabaseReference reviewProfessor = rootRef.child("professor").child(finalProfessor);
 
-
-                    reviewProfessor.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            //                            this is for course rating under professor
-
-                            Integer courseRating=0,courseRatingCount=0;
-
-                            courseRating = Integer.parseInt(dataSnapshot.child("course_rating").child("total_ratings").getValue().toString());
-                            courseRatingCount= Integer.parseInt(dataSnapshot.child("course_rating").child("count").getValue().toString());
-
-
-                            courseRating=courseRating+Integer.parseInt(finalCourseRating);
-                            courseRatingCount=courseRatingCount+1;
-
-                            tempCourseRatings=courseRating;
-                            getTempCourseRatingsTotal=courseRatingCount;
-
-                            Log.d("courseRating",courseRating.toString()+" "+courseRatingCount.toString());
-
-                            //                            this is for professor rating under professor
-
-                            Integer professorRating=0,professorRatingCount=0;
-
-                            professorRating = Integer.parseInt(dataSnapshot.child("prof_rating").child("total_ratings").getValue().toString());
-                            professorRatingCount= Integer.parseInt(dataSnapshot.child("prof_rating").child("count").getValue().toString());
-
-
-                            professorRating=professorRating+Integer.parseInt(finalProfessorRating);
-                            professorRatingCount=professorRatingCount+1;
-
-                            tempProfessorRatings=professorRating;
-                            getProfessorRatingsTotal= professorRatingCount;
-
-
-                            Log.d("subvalues",tempProfessorRatings.toString()+" "+getProfessorRatingsTotal.toString());
-
-
-//                            course diffculty rating under professor
-
-                            Integer courseDifficultyRating=0 , courseDifficultyRatingTotal=0;
-
-                            courseDifficultyRating = Integer.parseInt(dataSnapshot.child("difficulty").child("total_diff").getValue().toString());
-                            courseDifficultyRatingTotal= Integer.parseInt(dataSnapshot.child("difficulty").child("count").getValue().toString());
-
-
-                            courseDifficultyRating=courseDifficultyRating+Integer.parseInt(finalCourseDifficulty);
-                            courseDifficultyRatingTotal=courseDifficultyRatingTotal+1;
-
-
-                            tempCourseDifficulty=courseDifficultyRating;
-                            getCourseDifficulty=courseDifficultyRatingTotal;
-
-
-                            Log.d("subvaluesdifficulty",tempCourseDifficulty.toString()+" "+getCourseDifficulty.toString());
-
-
-
-                        //           number of hours per week rating under professor
-
-                        Integer numberofhours=0 , totalHours=0;
-
-                            numberofhours = Integer.parseInt(dataSnapshot.child("hr_per_week").child("total_hours").getValue().toString());
-                            totalHours= Integer.parseInt(dataSnapshot.child("hr_per_week").child("count").getValue().toString());
-
-
-                            numberofhours=numberofhours+Integer.parseInt(hoursValue.getText().toString());
-                            totalHours=totalHours+1;
-
-                            temp_hr_weeks=numberofhours;
-                            getTemp_hr_weeks=totalHours;
-
-
-                        Log.d("subvaluesdifficulty",tempCourseDifficulty.toString()+" "+getCourseDifficulty.toString());
-
-
-
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-
-
-
-                    });
-
-
-                    if(tempCourseRatings!=0 && finalCourseRating.length()>0 ) {
-                        Log.d("finalValues", tempCourseRatings.toString() + " " + getTempCourseRatingsTotal.toString());
-                        reviewProfessor.child("course_rating").child("total_ratings").setValue(tempCourseRatings);
-                        reviewProfessor.child("course_rating").child("count").setValue(getTempCourseRatingsTotal);
+                    if(!finalCourseRating.equals("")) {
+                        reviewProfessor.child("course_rating").push().setValue(Integer.parseInt(finalCourseRating));
                     }
 
-                    if(tempProfessorRatings!=0 && finalProfessorRating.length()>0){
-                        Log.d("professorRating",tempProfessorRatings.toString()+" "+getProfessorRatingsTotal.toString());
-                        reviewProfessor.child("prof_rating").child("total_ratings").setValue(tempProfessorRatings);
-                        reviewProfessor.child("prof_rating").child("count").setValue(getProfessorRatingsTotal);
+                    if(!finalCourseDifficulty.equals("")) {
+                        reviewProfessor.child("difficulty").push().setValue(Integer.parseInt(finalCourseDifficulty));
                     }
 
-                    if(tempCourseDifficulty!=0 && finalCourseDifficulty.length()>0){
-                        reviewProfessor.child("difficulty").child("total_diff").setValue(tempCourseDifficulty);
-                        reviewProfessor.child("difficulty").child("count").setValue(getCourseDifficulty);
-                    }
-
-                    if(temp_hr_weeks!=0){
-                        reviewProfessor.child("hr_per_week").child("total_hours").setValue(temp_hr_weeks);
-                        reviewProfessor.child("hr_per_week").child("count").setValue(getTemp_hr_weeks);
+                    if(!finalGrade.equals("")) {
+                        reviewProfessor.child("grades").push().setValue(finalGrade);
                     }
 
 
+                    reviewProfessor.child("hr_per_week").push().setValue(Integer.parseInt(hoursValue.getText().toString()));
 
+                    if(!finalProfessorRating.equals("")) {
+                        reviewProfessor.child("prof_rating").push().setValue(Integer.parseInt(finalProfessorRating));
+                    }
 
                 }else{
                     Toast.makeText(CourseSurvey.this,"Select Professor", Toast.LENGTH_LONG).show();
                 }
-
-//                adding Professor Specific details
 
 
 
@@ -460,90 +362,16 @@ public class CourseSurvey extends AppCompatActivity {
 
                 Comments comment = new Comments("0","0",temp_comment,date.toString(),"0","Anonymous");
 
-                reviewReference.push().setValue(comment);
-
+                if(!temp_comment.equals("")) {
+                    reviewReference.push().setValue(comment);
+                }
 
 //              updating standings
 
                 if(finalStandings!="" && finalStandings.length()>0) {
-
-                    final DatabaseReference standingReference = rootRef.child("Standing").child(finalStandings);
-
-
-                     standingReference.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            Integer temporaryStandings;
-
-                            temporaryStandings = Integer.parseInt(dataSnapshot.getValue().toString());
-
-                            temporaryStandings = temporaryStandings+1;
-
-                            tempStandings = String.valueOf(temporaryStandings);
-                            Log.d("tempstandings",tempStandings + dataSnapshot.getValue());
-
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-
-                    });
-
-//                    Log.d("tempstandings",tempStandings);
-
-                    if(tempStandings.length()>0) {
-                        standingReference.setValue(tempStandings);
-                    }
-
-
-                    Log.d("ending", tempStandings);
-
-
-                    final DatabaseReference standingReferenceTotal = rootRef.child("Standing").child("total");
-
-                    standingReferenceTotal.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            Integer temporaryStandings=0;
-
-                            temporaryStandings = Integer.parseInt(dataSnapshot.getValue().toString());
-
-                            temporaryStandings = temporaryStandings+1;
-
-                            tempTotalStandings = String.valueOf(temporaryStandings);
-
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-
-                    });
-
-
-
-                    if(tempTotalStandings.length()>0) {
-                        standingReferenceTotal.setValue(tempTotalStandings);
-                    }
-
-
+                    final DatabaseReference standingReference = rootRef.child("Standing");
+                    standingReference.push().setValue(finalStandings);
                 }
-
-
-                DatabaseReference courseRatingReference = rootRef.child("course_rating");
-
-
-
-
-
-                Intent objectQ = new Intent(CourseSurvey.this,CourseDetail.class);
 
                 Toast.makeText(CourseSurvey.this,"Review posted",Toast.LENGTH_LONG).show();
 

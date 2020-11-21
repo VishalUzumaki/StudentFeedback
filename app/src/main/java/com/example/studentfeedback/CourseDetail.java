@@ -299,7 +299,7 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
                             tempData=tempData+ "\n Avg Hours Spent outside class "+avg_hours_spent+"\n";
 
 
-                            tempData=tempData+"Grade Distribution: \n";
+                            tempData=tempData+" \n Grade Distribution: \n";
 
 
 
@@ -343,9 +343,9 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
                             };
 
 
-                            tempData= tempData+ "A: "+ (ACount*100/totalGradesCount) +  "  A- :"+(AMinusCount*100/totalGradesCount)+"\n";
-                            tempData= tempData+ "B: "+ (BCount*100/totalGradesCount) +  "  B- :"+(BMinusCount*100/totalGradesCount)+"\n";
-                            tempData= tempData+ "C: "+ (CCount*100/totalGradesCount) +  "  C- :"+(CMinusCount*100/totalGradesCount)+"\n";
+                            tempData= tempData+ "A: "+ (ACount*100/totalGradesCount) +  "  A- :"+(AMinusCount*100/totalGradesCount)+" ";
+                            tempData= tempData+ "B: "+ (BCount*100/totalGradesCount) +  "  B- :"+(BMinusCount*100/totalGradesCount)+" ";
+                            tempData= tempData+ "C: "+ (CCount*100/totalGradesCount) +  "  C- :"+(CMinusCount*100/totalGradesCount)+" ";
                             tempData= tempData+ "Other: "+ (OtherCount*100/totalGradesCount);
 
 

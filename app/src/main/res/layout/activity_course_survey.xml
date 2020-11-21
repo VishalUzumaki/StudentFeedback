@@ -115,7 +115,8 @@
                 android:id="@+id/commentsReview"
                 android:layout_width="match_parent"
                 android:layout_height="274dp"
-                android:text="Comments Review ..." />
+                android:hint="Add Comment"
+                android:textAlignment="textStart" />
 
             <Button
                 android:id="@+id/submitSurvey"
