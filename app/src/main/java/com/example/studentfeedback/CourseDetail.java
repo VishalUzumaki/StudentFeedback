@@ -188,6 +188,7 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
                 Intent addSurvey = new Intent(CourseDetail.this,CourseSurvey.class);
 
                 addSurvey.putExtra("University",universityName);
+                addSurvey.putExtra("Department",departmentSelected);
                 addSurvey.putExtra("CourseName",courseTitle);
 
                 startActivity(addSurvey);
