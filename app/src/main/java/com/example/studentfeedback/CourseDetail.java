@@ -34,7 +34,7 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
     private Spinner selectProfessor;
 
-    private Button addReview;
+    private Button addReview,allComments;
 
     private List<String> professorList;
 
@@ -57,6 +57,9 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
 
         otherDescription = findViewById(R.id.otherDescription);
+
+
+        allComments = findViewById(R.id.allcomments);
 
 
         addReview = findViewById(R.id.addReview);
@@ -164,6 +167,20 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
         selectProfessor.setOnItemSelectedListener(CourseDetail.this);
 
+
+        allComments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent object = new Intent(CourseDetail.this,AllComments.class);
+
+                object.putExtra("University",universityName);
+                object.putExtra("Department",departmentSelected);
+                object.putExtra("CourseName",courseTitle);
+
+                startActivity(object);
+            }
+        });
+
         addReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,6 +188,7 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
                 Intent addSurvey = new Intent(CourseDetail.this,CourseSurvey.class);
 
                 addSurvey.putExtra("University",universityName);
+                addSurvey.putExtra("Department",departmentSelected);
                 addSurvey.putExtra("CourseName",courseTitle);
 
                 startActivity(addSurvey);
@@ -203,26 +221,72 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
                             Log.d("professor",dataSnapshot.toString());
 
 
+
                             String tempData="";
 
-                            tempData="Assignment Frequency "+dataSnapshot.child("Assignment_freq").getValue().toString()+"\n";
+                            tempData="Email Id: " + dataSnapshot.child("email").getValue().toString()+"\n";
+
+                            float course_professor_total=Float.parseFloat(dataSnapshot.child("prof_rating").child("total_ratings").getValue().toString());
+                            float course_professor_count=Float.parseFloat(dataSnapshot.child("prof_rating").child("count").getValue().toString());
+
+                            float avg_ratings_professor= course_professor_total/course_professor_count;
+
+                            tempData=tempData+"Average Professor Rating: " + String.valueOf(avg_ratings_professor)+"\n";
+
+                            float course_rating_total=Float.parseFloat(dataSnapshot.child("course_rating").child("total_ratings").getValue().toString());
+                            float course_rating_count=Float.parseFloat(dataSnapshot.child("course_rating").child("count").getValue().toString());
+
+                            float avg_ratings= course_rating_total/course_rating_count;
+
+                            tempData=tempData+"Average Course Rating: " + String.valueOf(avg_ratings)+"\n";
+
+                            tempData=tempData+"Assignment Frequency : "+dataSnapshot.child("Assignment_freq").getValue().toString()+"\n";
 
                             tempData=tempData+ "Course Structure ";
 
                             Log.d("test",dataSnapshot.child("PQE").toString());
 
-                            for (DataSnapshot objSnapshot: dataSnapshot.child("PQE").getChildren()) {
-                                if(objSnapshot.getValue().toString()=="True"){
-                                 tempData = tempData +  objSnapshot.getKey().toString() +" ";
-                                }
+                            Log.d("pqe",dataSnapshot.child("PQE").getValue().toString());
+
+                            for (DataSnapshot objSnapshot: dataSnapshot.child("PQE").getChildren()){
+                                Log.d("inside",objSnapshot.getValue().toString());
+//                                if (objSnapshot.getValue().toString() == "yes" || objSnapshot.getValue().toString() == "True" ) {
+                                    tempData = tempData + objSnapshot.getKey().toString() +" : "+objSnapshot.getValue().toString() + " ";
+//                                }
+//                                else{
+//                                    tempData = tempData + "Nope" + " ";
+//                                }
                             }
 
-                            tempData=tempData+ "\n"+"Terms this course if offered ";
+                            tempData=tempData+ "\n"+"Offered during : "+dataSnapshot.child("course_offered").getValue().toString();
 
-//                            for (DataSnapshot objSnapshot: dataSnapshot.getChildren()) {
-//                                    Log.d("data",objSnapshot.toString());
-//                                    tempData = tempData +  objSnapshot.getValue().toString() +" ";
-//                            }
+                            float hours_perweek_total=Float.parseFloat(dataSnapshot.child("hr_per_week").child("total_hours").getValue().toString());
+                            float hours_perweek_count=Float.parseFloat(dataSnapshot.child("hr_per_week").child("count").getValue().toString());
+
+                            float avg_hours= hours_perweek_total/hours_perweek_count;
+
+                            tempData=tempData+ "\n"+"Number of Hours Spent outside class/week : "+ String.valueOf(avg_hours);
+
+                            tempData=tempData+"\n"+"\n"+"Grade Distribution: ";
+
+
+                            float course_grade_total =  Float.parseFloat(dataSnapshot.child("grades").child("total").getValue().toString());
+
+                            for (DataSnapshot objSnapshot: dataSnapshot.child("grades").getChildren()){
+
+                                float temp_rating =  Float.parseFloat(objSnapshot.getValue().toString());
+                                float percent = (temp_rating*100)/course_grade_total;
+
+                                String tempGrade = objSnapshot.getKey().toString();
+
+                                Log.d("tempGrade",tempGrade);
+
+                                if(!tempGrade.equals("total")){
+                                    tempData = tempData + "\n"+ tempGrade +" : " +  String.valueOf(percent)+" ";
+                                }
+
+
+                            }
 
 
                             otherDescription.setText(tempData);

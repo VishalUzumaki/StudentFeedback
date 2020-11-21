@@ -81,7 +81,8 @@
                 android:id="@+id/textView5"
                 android:layout_width="203dp"
                 android:layout_height="wrap_content"
-                android:text="Select Professor" />
+                android:text="Select Professor"
+                android:textSize="24sp" />
 
             <Spinner
                 android:id="@+id/professorSpinner"
@@ -93,14 +94,28 @@
 
         <TextView
             android:id="@+id/otherDescription"
-            android:layout_width="match_parent"
-            android:layout_height="272dp"
+            android:layout_width="423dp"
+            android:layout_height="187dp"
+            android:scrollbars="vertical"
             android:text="Select  Professor ..." />
 
-        <Button
-            android:id="@+id/addReview"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add Review" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/allcomments"
+                android:layout_width="217dp"
+                android:layout_height="wrap_content"
+                android:text="All Comments" />
+
+            <Button
+                android:id="@+id/addReview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Review" />
+        </LinearLayout>
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
