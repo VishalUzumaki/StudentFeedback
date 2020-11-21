@@ -44,10 +44,11 @@ public class CourseSurvey extends AppCompatActivity {
     private List<String> scalingRate;
 
 
-    private String finalStandings="",finalGrade,finalProfessor="", finalProfessorRating, finalCourseRating, finalCourseDifficulty;
+    private String finalStandings="",finalGrade="",finalProfessor="", finalProfessorRating="", finalCourseRating="", finalCourseDifficulty="";
 
     private String tempStandings="",tempTotalStandings="";
     private Integer tempCourseRatings=0,getTempCourseRatingsTotal=0;
+    private Integer tempProfessorRatings=0,getProfessorRatingsTotal=0;
 
 
 
@@ -328,6 +329,8 @@ public class CourseSurvey extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                            //                            this is for course rating under professor
+
                             Integer courseRating=0,courseRatingCount=0;
 
                             courseRating = Integer.parseInt(dataSnapshot.child("course_rating").child("total_ratings").getValue().toString());
@@ -341,6 +344,24 @@ public class CourseSurvey extends AppCompatActivity {
                             getTempCourseRatingsTotal=courseRatingCount;
 
                             Log.d("courseRating",courseRating.toString()+" "+courseRatingCount.toString());
+
+                            //                            this is for professor rating under professor
+
+                            Integer professorRating=0,professorRatingCount=0;
+
+                            professorRating = Integer.parseInt(dataSnapshot.child("prof_rating").child("total_ratings").getValue().toString());
+                            professorRatingCount= Integer.parseInt(dataSnapshot.child("prof_rating").child("count").getValue().toString());
+
+
+                            professorRating=professorRating+Integer.parseInt(finalProfessorRating);
+                            professorRatingCount=professorRatingCount+1;
+
+                            tempProfessorRatings=professorRating;
+                            getProfessorRatingsTotal= professorRatingCount;
+
+
+                            Log.d("subvalues",tempProfessorRatings.toString()+" "+getProfessorRatingsTotal.toString());
+
                         }
 
                         @Override
@@ -351,11 +372,22 @@ public class CourseSurvey extends AppCompatActivity {
                     });
 
 
-                    if(tempCourseRatings!=0) {
+                    if(tempCourseRatings!=0 && finalCourseRating.length()>0) {
                         Log.d("finalValues", tempCourseRatings.toString() + " " + getTempCourseRatingsTotal.toString());
                         reviewProfessor.child("course_rating").child("total_ratings").setValue(tempCourseRatings);
                         reviewProfessor.child("course_rating").child("count").setValue(getTempCourseRatingsTotal);
                     }
+
+                    if(tempProfessorRatings!=0 && finalProfessorRating.length()>0){
+                        Log.d("professorRating",tempProfessorRatings.toString()+" "+getProfessorRatingsTotal.toString());
+                        reviewProfessor.child("prof_rating").child("total_ratings").setValue(tempProfessorRatings);
+                        reviewProfessor.child("prof_rating").child("count").setValue(getProfessorRatingsTotal);
+                    }
+
+
+
+
+
                 }else{
                     Toast.makeText(CourseSurvey.this,"Select Professor", Toast.LENGTH_LONG).show();
                 }
