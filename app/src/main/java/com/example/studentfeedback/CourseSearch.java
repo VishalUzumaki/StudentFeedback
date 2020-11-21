@@ -1,28 +1,23 @@
 package com.example.studentfeedback;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItemView;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.TestLooperManager;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ActionMenuView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,37 +26,28 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.nio.channels.InterruptedByTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Dashboard extends AppCompatActivity {
+public class CourseSearch extends AppCompatActivity {
 
 
     private FirebaseAuth authObj;
-
-    private Button logout,searchButton;
-
+    private Button logout_,searchButton;
     private EditText searchString;
-
     private ListView coursesList;
-
-
     private  String universityName = "";
-
-
     private DataSnapshot temp_dataSnapshot;
-
     private Spinner selectDepartment;
-
     private String departmentSelected="";
+    ActionMenuItemView logout;
 
 
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
+        setContentView(R.layout.activity_course_search);
 
         authObj = FirebaseAuth.getInstance();
 
@@ -94,54 +80,45 @@ public class Dashboard extends AppCompatActivity {
         final ArrayList<String> placeholderforDepartmentName = new ArrayList<>();
 
 
-        final ArrayAdapter adapter= new ArrayAdapter(this, R.layout.course_list_item,list);
+        final ArrayAdapter adapter= new ArrayAdapter(this, R.layout.course_list_item, R.id.label, list);
 
 
         coursesList.setAdapter(adapter);
-
-
 
         coursesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-//                Toast.makeText(Dashboard.this,"clicked item "+list.get(i),Toast.LENGTH_LONG).show();
+//                Toast.makeText(CourseSearch.this,"clicked item "+list.get(i),Toast.LENGTH_LONG).show();
 
-                Intent openCourseDetails = new Intent(Dashboard.this,CourseDetail.class);
-
-
+                Intent openCourseDetails = new Intent(CourseSearch.this,CourseDetail.class);
                 openCourseDetails.putExtra("universityName", universityName);
 
                 Log.d("placeholder","for department|"+placeholderforDepartmentName.toString());
 
-                if(departmentSelected == "All"){
+                if(departmentSelected == "All")
+                {
                     openCourseDetails.putExtra("departmentSelected",placeholderforDepartmentName.get(i));
                 }
-                else{
+                else
+                {
                     openCourseDetails.putExtra("departmentSelected",departmentSelected);
                 }
 
                 openCourseDetails.putExtra("courseName",list.get(i));
-
-
                 startActivity(openCourseDetails);
-
             }
         });
 
 //        getting University Name for course search
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-
         DatabaseReference departmentNames = database.getReference().child("University").child(universityName);
-
         Log.d("test",departmentNames.toString());
 
         final List<String> departmentsList = new ArrayList<String>();
 
         departmentsList.add("All"); //This is for All
-
-
         departmentNames.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -365,12 +342,12 @@ public class Dashboard extends AppCompatActivity {
         FirebaseUser currentUser = authObj.getCurrentUser();
 
         if(currentUser == null){
-            startActivity(new Intent(Dashboard.this, SelectUniversity.class));
+            startActivity(new Intent(CourseSearch.this, SelectUniversity.class));
         }
 
 
 //        if (currentUser != null) {
-//            startActivity(new Intent( Dashboard.this,Login.class));
+//            startActivity(new Intent( CourseSearch.this,Login.class));
 //        }
 
 //         if user is already logged in
@@ -379,7 +356,7 @@ public class Dashboard extends AppCompatActivity {
 
     protected void logoutUser() {
         authObj.signOut();
-        startActivity(new Intent(Dashboard.this, SelectUniversity.class));
+        startActivity(new Intent(CourseSearch.this, SelectUniversity.class));
     }
 
 
