@@ -9,9 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MatTheme">
-        <activity android:name=".underConstruction"/>
+        <activity android:name=".dFragment"></activity>
+        <activity android:name=".TabActivity" />
+        <activity android:name=".underConstruction" />
         <activity android:name=".options" />
-        <activity android:name=".IndividualComment"/>
+        <activity android:name=".IndividualComment" />
         <activity android:name=".AllComments" />
         <activity android:name=".CourseSurvey" />
         <activity android:name=".CourseDetail" />

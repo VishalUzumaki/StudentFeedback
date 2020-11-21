@@ -68,6 +68,14 @@
                 android:background="@drawable/rounded"
                 android:text="Discussion forum" />
 
+            <Button
+                android:id="@+id/test"
+                android:layout_marginTop="50dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/rounded"
+                android:text="test" />
+
         </LinearLayout>
 
     </LinearLayout>

@@ -1,6 +1,10 @@
 package com.example.studentfeedback;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,19 +29,13 @@ import java.util.List;
 public class CourseDetail extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private TextView courseName,description,syllabus,standings,otherDescription;
-
-
     private String universityName="";
     private String courseTitle="";
     private String departmentSelected="";
     private String professorSelected = "";
-
     private Spinner selectProfessor;
-
     private Button addReview,allComments;
-
     private List<String> professorList;
-
     private FirebaseDatabase database;
 
     @Override

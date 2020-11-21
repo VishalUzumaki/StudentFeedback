@@ -8,9 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ActionMenuView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -18,9 +16,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -353,7 +349,8 @@ public class CourseSearch extends AppCompatActivity {
 
     protected void logoutUser() {
         authObj.signOut();
-        startActivity(new Intent(CourseSearch.this, SelectUniversity.class));
+        Intent in = new Intent(CourseSearch.this, SelectUniversity.class);
+        startActivity(in);
         finish();
     }
 
