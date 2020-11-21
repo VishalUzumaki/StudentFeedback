@@ -25,7 +25,7 @@ public class SignupPage extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private EditText password,username;
-    private Button submit,signup;
+    private Button signup, back;
 
     private ImageView imageView;
 
@@ -44,8 +44,16 @@ public class SignupPage extends AppCompatActivity {
         password = findViewById(R.id.password);
         username = findViewById(R.id.username);
         imageView = findViewById(R.id.imageView);
-
         signup= findViewById(R.id.signup);
+        back = findViewById(R.id.extended_fab);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(SignupPage.this, Login.class);
+                startActivity(in);
+            }
+        });
 
 
 
@@ -79,7 +87,7 @@ public class SignupPage extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
-            Intent openDashboard = new Intent(SignupPage.this,Dashboard.class);
+            Intent openDashboard = new Intent(SignupPage.this, CourseSearch.class);
             openDashboard.putExtra("name",UniversityName);
             startActivity(openDashboard);
 
@@ -102,7 +110,7 @@ public class SignupPage extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("success", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(SignupPage.this,Dashboard.class));
+                            startActivity(new Intent(SignupPage.this, CourseSearch.class));
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("failed", "createUserWithEmail:failure", task.getException());

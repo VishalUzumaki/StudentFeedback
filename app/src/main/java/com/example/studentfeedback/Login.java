@@ -127,7 +127,7 @@ public class Login extends AppCompatActivity {
         FirebaseUser currentUser = authObj.getCurrentUser();
 
         if (currentUser != null) {
-            Intent openDashboard = new Intent(Login.this,Dashboard.class);
+            Intent openDashboard = new Intent(Login.this, CourseSearch.class);
             openDashboard.putExtra("name",UniversityName);
             startActivity(openDashboard);
         }
@@ -145,7 +145,7 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.w("Success", "successlogin");
-                            Intent openDashboard = new Intent(Login.this,Dashboard.class);
+                            Intent openDashboard = new Intent(Login.this, CourseSearch.class);
                             openDashboard.putExtra("name",UniversityName);
                             startActivity(openDashboard);
                         } else {

@@ -1,7 +1,6 @@
 package com.example.studentfeedback;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,7 +45,7 @@ public class SelectUniversity extends AppCompatActivity {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
             String uniName=pref.getString("University", null);
 
-            Intent openDashboard = new Intent(SelectUniversity.this, Dashboard.class);
+            Intent openDashboard = new Intent(SelectUniversity.this, CourseSearch.class);
 
             openDashboard.putExtra("name",uniName);
 
