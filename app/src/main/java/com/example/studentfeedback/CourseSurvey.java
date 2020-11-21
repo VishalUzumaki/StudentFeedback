@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -35,15 +34,22 @@ public class CourseSurvey extends AppCompatActivity {
     private String departmentSelected="";
 
 
-    private Spinner professorList, standingsList, gradesList;
-    private EditText professorRatingValue, courseRatingValue, hoursValue, difficultyValue, commentValue;
 
-    private List<String> standingsOptions,gradesOptions;
+    private Spinner professorList, standingsList, gradesList , professorRatingValue, courseRatingValue, difficultyValue;
+    private EditText  commentValue,hoursValue;
+
+    private List<String> standingsOptions;
+    private List<String> gradesOptions;
+    private List<String> professorOptions;
+    private List<String> scalingRate;
 
 
-    private String finalStandings,finalGrade,finalProfessor;
+    private String finalStandings="",finalGrade,finalProfessor="", finalProfessorRating, finalCourseRating, finalCourseDifficulty;
 
     private String tempStandings="",tempTotalStandings="";
+    private Integer tempCourseRatings=0,getTempCourseRatingsTotal=0;
+
+
 
 
     @IgnoreExtraProperties
@@ -89,6 +95,13 @@ public class CourseSurvey extends AppCompatActivity {
 
         professorList = findViewById(R.id.porfessorSelection);
 
+        professorOptions = new ArrayList<String>();
+
+        professorOptions.add(" ");
+
+
+
+
         gradesList = findViewById(R.id.gradeReview);
 
         gradesOptions = new ArrayList<String>();
@@ -102,10 +115,24 @@ public class CourseSurvey extends AppCompatActivity {
         gradesOptions.add("other");
 
 
+
+
         professorRatingValue = findViewById(R.id.professorRatingReview);
         courseRatingValue = findViewById(R.id.courseRatingreview);
         hoursValue = findViewById(R.id.hoursReview);
         difficultyValue = findViewById(R.id.difficultyreview);
+
+
+        scalingRate = new ArrayList<String>();
+        scalingRate.add(" ");
+
+        for(int i=1;i<6;i++)
+        {
+            scalingRate.add(String.valueOf(i));
+        }
+
+
+
         commentValue = findViewById(R.id.commentsReview);
 
 
@@ -121,6 +148,62 @@ public class CourseSurvey extends AppCompatActivity {
 
 
 
+        final ArrayAdapter<String> ratingAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, scalingRate);
+
+
+        ratingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+//        Setting rate scale for all the dropdown
+        professorRatingValue.setAdapter(ratingAdapter);
+        courseRatingValue.setAdapter(ratingAdapter);
+        difficultyValue.setAdapter(ratingAdapter);
+
+
+        professorRatingValue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if(position!=0){
+
+                    finalProfessorRating = scalingRate.get(position);
+
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        courseRatingValue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                finalCourseRating  = scalingRate.get(position);
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        difficultyValue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                finalCourseDifficulty = scalingRate.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
         final ArrayAdapter<String> standingsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, standingsOptions);
@@ -148,6 +231,81 @@ public class CourseSurvey extends AppCompatActivity {
                                                     }
                                                 });
 
+
+        final ArrayAdapter<String> courseGradeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, gradesOptions);
+
+        courseGradeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        gradesList.setAdapter(courseGradeAdapter);
+
+        gradesList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if(position!=0){
+                    finalGrade = gradesOptions.get(position);
+                }
+                else {
+//                                                        Toast.makeText(CourseSurvey.this, standingsOptions.get(position), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        final FirebaseDatabase database2 = FirebaseDatabase.getInstance();
+        DatabaseReference professorNameref = database2.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle).child("professor");
+
+
+        professorNameref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                professorOptions.clear();
+                professorOptions.add("");
+
+                for(DataSnapshot objSnapshot: dataSnapshot.getChildren()){
+                    professorOptions.add(objSnapshot.getKey().toString());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        final ArrayAdapter<String> professorAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, professorOptions);
+
+        professorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        professorList.setAdapter(professorAdapter);
+
+        professorList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if(position!=0){
+                    finalProfessor = professorOptions.get(position);
+                    Toast.makeText(CourseSurvey.this, "selected "+professorOptions.get(position), Toast.LENGTH_LONG).show();
+                }
+                else {
+//                                                        Toast.makeText(CourseSurvey.this, standingsOptions.get(position), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+
         submitReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -159,6 +317,51 @@ public class CourseSurvey extends AppCompatActivity {
 
 //                root reference will refer to the subject from here we have to set to its sub propoerties like
 //                reference to rating, syllabus, etc.
+
+
+
+                if(finalProfessor.length()>0){
+                    DatabaseReference reviewProfessor = rootRef.child("professor").child(finalProfessor);
+
+
+                    reviewProfessor.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            Integer courseRating=0,courseRatingCount=0;
+
+                            courseRating = Integer.parseInt(dataSnapshot.child("course_rating").child("total_ratings").getValue().toString());
+                            courseRatingCount= Integer.parseInt(dataSnapshot.child("course_rating").child("count").getValue().toString());
+
+
+                            courseRating=courseRating+Integer.parseInt(finalCourseRating);
+                            courseRatingCount=courseRatingCount+1;
+
+                            tempCourseRatings=courseRating;
+                            getTempCourseRatingsTotal=courseRatingCount;
+
+                            Log.d("courseRating",courseRating.toString()+" "+courseRatingCount.toString());
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+
+                    });
+
+
+                    if(tempCourseRatings!=0) {
+                        Log.d("finalValues", tempCourseRatings.toString() + " " + getTempCourseRatingsTotal.toString());
+                        reviewProfessor.child("course_rating").child("total_ratings").setValue(tempCourseRatings);
+                        reviewProfessor.child("course_rating").child("count").setValue(getTempCourseRatingsTotal);
+                    }
+                }else{
+                    Toast.makeText(CourseSurvey.this,"Select Professor", Toast.LENGTH_LONG).show();
+                }
+
+//                adding Professor Specific details
+
 
 
 //              adding  comment
@@ -175,7 +378,7 @@ public class CourseSurvey extends AppCompatActivity {
 
 //              updating standings
 
-                if(finalStandings.length()>0) {
+                if(finalStandings!="" && finalStandings.length()>0) {
 
                     final DatabaseReference standingReference = rootRef.child("Standing").child(finalStandings);
 
@@ -244,11 +447,21 @@ public class CourseSurvey extends AppCompatActivity {
                     }
 
 
-
-
                 }
 
+
+                DatabaseReference courseRatingReference = rootRef.child("course_rating");
+
+
+
+
+
+
             }
+
+
+
+
         });
 
 
