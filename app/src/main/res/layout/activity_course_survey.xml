@@ -114,7 +114,7 @@
             <EditText
                 android:id="@+id/commentsReview"
                 android:layout_width="match_parent"
-                android:layout_height="203dp"
+                android:layout_height="274dp"
                 android:text="Comments Review ..." />
 
             <Button

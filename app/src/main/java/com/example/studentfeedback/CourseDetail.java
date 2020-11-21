@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -108,39 +109,51 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
                         professorList.add(objSnapshot.getKey().toString());
                     }
 
-
-
 //                    Extracting standings total and calculating percentage
-                    String standingsSubData="";
 
-                    Integer standingsTotal = Integer.valueOf(dataSnapshot.child("Standing").child("total").getValue().toString());
+                    Integer freshManCount=0, juniorCount =0 , seniorCount = 0, masterscount =0, phdcount =0, sophmorcount=0;
+                    Integer totalStandingsCount = 0;
 
-                    Integer standingsFreshman = Integer.valueOf(dataSnapshot.child("Standing").child("freshman").getValue().toString());
-                    Integer standingsFreshmanPercent =(standingsFreshman*100)/standingsTotal;
-                    standingsSubData=standingsSubData+"Freshman "+standingsFreshmanPercent.toString()+"% \n";
 
-                    Integer standingsJunior = Integer.valueOf(dataSnapshot.child("Standing").child("junior").getValue().toString());
-                    Integer standingsJuniorPercent =(standingsJunior*100)/standingsTotal;
-                    standingsSubData=standingsSubData+"Junior "+standingsJuniorPercent.toString()+"% \n";
+                    for(DataSnapshot snapshot: dataSnapshot.child("Standing").getChildren()){
 
-                    Integer standingsSophomor = Integer.valueOf(dataSnapshot.child("Standing").child("sophomor").getValue().toString());
-                    Integer standingsSophomorPercent =(standingsSophomor*100)/standingsTotal;
-                    standingsSubData=standingsSubData+"Sophomor "+standingsSophomorPercent.toString()+"% \n";
+                        if(snapshot.getValue().toString().equals("freshman")){
+                            freshManCount=freshManCount+1;
+                        }
 
-                    Integer standingsSenior = Integer.valueOf(dataSnapshot.child("Standing").child("senior").getValue().toString());
-                    Integer standingsSeniorPercent =(standingsSenior*100)/standingsTotal;
-                    standingsSubData=standingsSubData+"Senior "+standingsSeniorPercent.toString()+"% \n";
+                        if(snapshot.getValue().toString().equals("junior")){
+                            juniorCount=juniorCount+1;
+                        }
 
-                    Integer standingsMasters = Integer.valueOf(dataSnapshot.child("Standing").child("masters").getValue().toString());
-                    Integer standingsMastersPercent =(standingsMasters*100)/standingsTotal;
-                    standingsSubData=standingsSubData+"Masters "+standingsMastersPercent.toString()+"% \n";
+                        if(snapshot.getValue().toString().equals("senior")){
+                            seniorCount=seniorCount+1;
+                        }
 
-                    Integer standingsPHD = Integer.valueOf(dataSnapshot.child("Standing").child("phd").getValue().toString());
-                    Integer standingsPHDPercent =(standingsPHD*100)/standingsTotal;
-                    standingsSubData=standingsSubData+"PHD "+standingsPHDPercent.toString()+"% \n";
+                        if(snapshot.getValue().toString().equals("masters")){
+                            masterscount=masterscount+1;
+                        }
 
-                    standings.setText(standingsSubData);
+                        if(snapshot.getValue().toString().equals("phd")){
+                            phdcount=phdcount+1;
+                        }
 
+                        if(snapshot.getValue().toString().equals("sophomor")){
+                            sophmorcount=sophmorcount+1;
+                        }
+
+                        totalStandingsCount=totalStandingsCount+1;
+
+                    };
+
+
+                    String temp= "Freshman: "+ (freshManCount*100/totalStandingsCount) +"\n";
+                    temp= temp+ "Sophmor: "+ (sophmorcount*100/totalStandingsCount) + "\n";
+                    temp = temp+ "Junior: "+ (juniorCount*100/totalStandingsCount) + "\n";
+                    temp= temp+ "Senior: "+ (seniorCount*100/totalStandingsCount) + "\n";
+                    temp = temp+ "Masters: "+ (masterscount*100/totalStandingsCount) + "\n";
+                    temp = temp+ "PHD: "+ (phdcount*100/totalStandingsCount) + "\n";
+
+                    standings.setText(temp);
 
                 }
                 else{
@@ -221,72 +234,119 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
                             Log.d("professor",dataSnapshot.toString());
 
 
-
                             String tempData="";
 
                             tempData="Email Id: " + dataSnapshot.child("email").getValue().toString()+"\n";
 
-                            float course_professor_total=Float.parseFloat(dataSnapshot.child("prof_rating").child("total_ratings").getValue().toString());
-                            float course_professor_count=Float.parseFloat(dataSnapshot.child("prof_rating").child("count").getValue().toString());
+                            double totalProfessorRating=0.0;
+                            double sumProfessorRating=0.0;
 
-                            float avg_ratings_professor= course_professor_total/course_professor_count;
+                            for(DataSnapshot snapshot: dataSnapshot.child("prof_rating").getChildren()){
 
-                            tempData=tempData+"Average Professor Rating: " + String.valueOf(avg_ratings_professor)+"\n";
+                                sumProfessorRating=sumProfessorRating+ Integer.parseInt(snapshot.getValue().toString());
+                                totalProfessorRating=totalProfessorRating+1;
 
-                            float course_rating_total=Float.parseFloat(dataSnapshot.child("course_rating").child("total_ratings").getValue().toString());
-                            float course_rating_count=Float.parseFloat(dataSnapshot.child("course_rating").child("count").getValue().toString());
+                            }
 
-                            float avg_ratings= course_rating_total/course_rating_count;
+                            String avg_professor_Rating = ""+(sumProfessorRating/totalProfessorRating);
 
-                            tempData=tempData+"Average Course Rating: " + String.valueOf(avg_ratings)+"\n";
+                            tempData=tempData+ "Avg Professor Rating "+avg_professor_Rating+"\n";
+
+                            double totalCourseRating=0.0;
+                            double sumCourseRating=0.0;
+
+                            for(DataSnapshot snapshot: dataSnapshot.child("course_rating").getChildren()){
+
+                                sumCourseRating=sumCourseRating+ Integer.parseInt(snapshot.getValue().toString());
+                                totalCourseRating=totalCourseRating+1;
+
+                            }
+
+                            String avg_course_Rating = ""+(sumCourseRating/totalCourseRating);
+
+                            tempData=tempData+ "Avg Course Rating "+avg_course_Rating+"\n";
+
 
                             tempData=tempData+"Assignment Frequency : "+dataSnapshot.child("Assignment_freq").getValue().toString()+"\n";
 
                             tempData=tempData+ "Course Structure ";
 
-                            Log.d("test",dataSnapshot.child("PQE").toString());
 
                             Log.d("pqe",dataSnapshot.child("PQE").getValue().toString());
 
                             for (DataSnapshot objSnapshot: dataSnapshot.child("PQE").getChildren()){
                                 Log.d("inside",objSnapshot.getValue().toString());
-//                                if (objSnapshot.getValue().toString() == "yes" || objSnapshot.getValue().toString() == "True" ) {
+//
                                     tempData = tempData + objSnapshot.getKey().toString() +" : "+objSnapshot.getValue().toString() + " ";
-//                                }
-//                                else{
-//                                    tempData = tempData + "Nope" + " ";
-//                                }
+//
                             }
 
                             tempData=tempData+ "\n"+"Offered during : "+dataSnapshot.child("course_offered").getValue().toString();
 
-                            float hours_perweek_total=Float.parseFloat(dataSnapshot.child("hr_per_week").child("total_hours").getValue().toString());
-                            float hours_perweek_count=Float.parseFloat(dataSnapshot.child("hr_per_week").child("count").getValue().toString());
 
-                            float avg_hours= hours_perweek_total/hours_perweek_count;
+                            double totalHoursSpent=0.0;
+                            double sumHoursSpent=0.0;
 
-                            tempData=tempData+ "\n"+"Number of Hours Spent outside class/week : "+ String.valueOf(avg_hours);
+                            for(DataSnapshot snapshot: dataSnapshot.child("hr_per_week").getChildren()){
 
-                            tempData=tempData+"\n"+"\n"+"Grade Distribution: ";
-
-
-                            float course_grade_total =  Float.parseFloat(dataSnapshot.child("grades").child("total").getValue().toString());
-
-                            for (DataSnapshot objSnapshot: dataSnapshot.child("grades").getChildren()){
-
-                                float temp_rating =  Float.parseFloat(objSnapshot.getValue().toString());
-                                float percent = (temp_rating*100)/course_grade_total;
-
-                                String tempGrade = objSnapshot.getKey().toString();
-
-                                Log.d("tempGrade",tempGrade);
-
-                                if(!tempGrade.equals("total")){
-                                    tempData = tempData + "\n"+ tempGrade +" : " +  String.valueOf(percent)+" ";
-                                }
-
+                                sumHoursSpent=sumHoursSpent+ Integer.parseInt(snapshot.getValue().toString());
+                                totalHoursSpent=totalHoursSpent+1;
 
                             }
+
+                            String avg_hours_spent = ""+(sumHoursSpent/totalHoursSpent);
+
+                            tempData=tempData+ "\n Avg Hours Spent outside class "+avg_hours_spent+"\n";
+
+
+                            tempData=tempData+"Grade Distribution: \n";
+
+
+
+                            Integer ACount=0, AMinusCount =0 , BCount = 0, BMinusCount =0, CCount =0, CMinusCount=0, OtherCount=0;
+
+                            Integer totalGradesCount = 0;
+
+
+                            for(DataSnapshot snapshot: dataSnapshot.child("grades").getChildren()){
+
+                                if(snapshot.getValue().toString().equals("A")){
+                                    ACount= ACount+1;
+                                }
+
+                                if(snapshot.getValue().toString().equals("A-")){
+                                    AMinusCount=AMinusCount+1;
+                                }
+
+                                if(snapshot.getValue().toString().equals("B")){
+                                    BCount=BCount+1;
+                                }
+
+                                if(snapshot.getValue().toString().equals("B-")){
+                                    BMinusCount=BMinusCount+1;
+                                }
+
+                                if(snapshot.getValue().toString().equals("C")){
+                                    CCount=CCount+1;
+                                }
+
+                                if(snapshot.getValue().toString().equals("C-")){
+                                    CMinusCount=CMinusCount+1;
+                                }
+
+                                if(snapshot.getValue().toString().equals("other")){
+                                    OtherCount=OtherCount+1;
+                                }
+
+                                totalGradesCount=totalGradesCount+1;
+
+                            };
+
+
+                            tempData= tempData+ "A: "+ (ACount*100/totalGradesCount) +  "  A- :"+(AMinusCount*100/totalGradesCount)+"\n";
+                            tempData= tempData+ "B: "+ (BCount*100/totalGradesCount) +  "  B- :"+(BMinusCount*100/totalGradesCount)+"\n";
+                            tempData= tempData+ "C: "+ (CCount*100/totalGradesCount) +  "  C- :"+(CMinusCount*100/totalGradesCount)+"\n";
+                            tempData= tempData+ "Other: "+ (OtherCount*100/totalGradesCount);
 
 
                             otherDescription.setText(tempData);
