@@ -84,7 +84,6 @@ public class CourseSearch extends AppCompatActivity {
         coursesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // Toast.makeText(CourseSearch.this,"clicked item "+list.get(i),Toast.LENGTH_LONG).show();
                 Intent openCourseDetails = new Intent(CourseSearch.this,CourseDetail.class);
                 openCourseDetails.putExtra("universityName", universityName);
 
@@ -164,7 +163,6 @@ public class CourseSearch extends AppCompatActivity {
                 placeholderforDepartmentName.clear();
 
                 Log.d("reach","reaching here" + dataSnapshot);
-
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
@@ -306,14 +304,7 @@ public class CourseSearch extends AppCompatActivity {
 
 
                 }
-
-
-
-
-
                 adapter.notifyDataSetChanged() ;
-
-
             }
 
             @Override
@@ -321,13 +312,14 @@ public class CourseSearch extends AppCompatActivity {
 
             }
         });
-
-
-
     }
 
-
-
+    protected void logoutUser() {
+        authObj.signOut();
+        Intent in = new Intent(CourseSearch.this, SelectUniversity.class);
+        startActivity(in);
+        finish();
+    }
 
 //    @Override
 //    protected void onStart() {
@@ -345,14 +337,5 @@ public class CourseSearch extends AppCompatActivity {
 
 //         if user is already logged in
 //    }
-
-
-    protected void logoutUser() {
-        authObj.signOut();
-        Intent in = new Intent(CourseSearch.this, SelectUniversity.class);
-        startActivity(in);
-        finish();
-    }
-
 
 }

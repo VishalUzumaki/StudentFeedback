@@ -7,16 +7,33 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,7 +45,8 @@ import java.util.List;
 
 public class CourseDetail extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private TextView courseName,description,syllabus,standings,otherDescription;
+    private TextView courseName,description,syllabus,prof_email,otherDescription, assign;
+    private TextView avg_hrs, offered;
     private String universityName="";
     private String courseTitle="";
     private String departmentSelected="";
@@ -37,6 +55,17 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
     private Button addReview,allComments;
     private List<String> professorList;
     private FirebaseDatabase database;
+    PieChart pie_Chart;
+    PieData pieData;
+    PieDataSet pieDataSet;
+    ArrayList pieEntries;
+    private RatingBar ratingBar;
+    private RatingBar ratingBar_c;
+    private BarChart barChart;
+
+    BarData barData;
+    BarDataSet barDataSet;
+    ArrayList barEntries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,36 +75,39 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
         courseName = findViewById(R.id.courseName);
         syllabus = findViewById(R.id.syllabus);
         description = findViewById(R.id.description);
-        standings = findViewById(R.id.standings);
+        pie_Chart = (PieChart) findViewById(R.id.pieChart);
+        prof_email = findViewById(R.id.prof_email);
+        avg_hrs = findViewById(R.id.avg_hrs);
+        offered = findViewById(R.id.offered);
+        barChart = findViewById(R.id.BarChart);
+        assign = findViewById(R.id.assign);
+        ratingBar = findViewById(R.id.prof_rating);
+        ratingBar_c = findViewById(R.id.course_rating);
+        otherDescription = findViewById(R.id.otherDescription);
+        allComments = findViewById(R.id.allcomments);
+        addReview = findViewById(R.id.addReview);
+
+        // for piechart
+        ArrayList<String> students = new ArrayList<String>();
+        students.add("Freshman");
+        students.add("Sophomore");
+        students.add("Junior");
+        students.add("Senior");
+        students.add("Master's");
+        students.add("PhD");
 
         selectProfessor =  (Spinner) findViewById(R.id.professorSpinner);
 
         professorList =  new ArrayList<String>();
         professorList.add(" ");
 
-
-        otherDescription = findViewById(R.id.otherDescription);
-
-
-        allComments = findViewById(R.id.allcomments);
-
-
-        addReview = findViewById(R.id.addReview);
-
-
-
         Intent courseNameIntent = getIntent();
-
         universityName = courseNameIntent.getStringExtra("universityName");
-
+        departmentSelected = courseNameIntent.getStringExtra("departmentSelected");
         String courseTitlearray[] = courseNameIntent.getStringExtra("courseName").split(" ");
 
         courseTitle = courseTitlearray[0]+" "+courseTitlearray[1];
-
-        departmentSelected = courseNameIntent.getStringExtra("departmentSelected");
-
         String courseHeader = "";
-
         for(int i=0;i<courseTitlearray.length;i++)
         {
             courseHeader=courseHeader+courseTitlearray[i]+" ";
@@ -106,39 +138,89 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
                         professorList.add(objSnapshot.getKey().toString());
                     }
 
-
-
 //                    Extracting standings total and calculating percentage
-                    String standingsSubData="";
 
-                    Integer standingsTotal = Integer.valueOf(dataSnapshot.child("Standing").child("total").getValue().toString());
+                    Integer freshManCount=0, juniorCount =0 , seniorCount = 0, masterscount =0, phdcount =0, sophmorcount=0;
+                    Integer totalStandingsCount = 0;
 
-                    Integer standingsFreshman = Integer.valueOf(dataSnapshot.child("Standing").child("freshman").getValue().toString());
-                    Integer standingsFreshmanPercent =(standingsFreshman*100)/standingsTotal;
-                    standingsSubData=standingsSubData+"Freshman "+standingsFreshmanPercent.toString()+"% \n";
 
-                    Integer standingsJunior = Integer.valueOf(dataSnapshot.child("Standing").child("junior").getValue().toString());
-                    Integer standingsJuniorPercent =(standingsJunior*100)/standingsTotal;
-                    standingsSubData=standingsSubData+"Junior "+standingsJuniorPercent.toString()+"% \n";
+                    for(DataSnapshot snapshot: dataSnapshot.child("Standing").getChildren()){
 
-                    Integer standingsSophomor = Integer.valueOf(dataSnapshot.child("Standing").child("sophomor").getValue().toString());
-                    Integer standingsSophomorPercent =(standingsSophomor*100)/standingsTotal;
-                    standingsSubData=standingsSubData+"Sophomor "+standingsSophomorPercent.toString()+"% \n";
+                        if(snapshot.getValue().toString().equals("freshman")){
+                            freshManCount=freshManCount+1;
+                        }
 
-                    Integer standingsSenior = Integer.valueOf(dataSnapshot.child("Standing").child("senior").getValue().toString());
-                    Integer standingsSeniorPercent =(standingsSenior*100)/standingsTotal;
-                    standingsSubData=standingsSubData+"Senior "+standingsSeniorPercent.toString()+"% \n";
+                        if(snapshot.getValue().toString().equals("junior")){
+                            juniorCount=juniorCount+1;
+                        }
 
-                    Integer standingsMasters = Integer.valueOf(dataSnapshot.child("Standing").child("masters").getValue().toString());
-                    Integer standingsMastersPercent =(standingsMasters*100)/standingsTotal;
-                    standingsSubData=standingsSubData+"Masters "+standingsMastersPercent.toString()+"% \n";
+                        if(snapshot.getValue().toString().equals("senior")){
+                            seniorCount=seniorCount+1;
+                        }
 
-                    Integer standingsPHD = Integer.valueOf(dataSnapshot.child("Standing").child("phd").getValue().toString());
-                    Integer standingsPHDPercent =(standingsPHD*100)/standingsTotal;
-                    standingsSubData=standingsSubData+"PHD "+standingsPHDPercent.toString()+"% \n";
+                        if(snapshot.getValue().toString().equals("masters")){
+                            masterscount=masterscount+1;
+                        }
 
-                    standings.setText(standingsSubData);
+                        if(snapshot.getValue().toString().equals("phd")){
+                            phdcount=phdcount+1;
+                        }
 
+                        if(snapshot.getValue().toString().equals("sophomor")){
+                            sophmorcount=sophmorcount+1;
+                        }
+
+                        totalStandingsCount=totalStandingsCount+1;
+
+                    };
+
+                    pieEntries = new ArrayList<>();
+                    if(freshManCount*100/totalStandingsCount > 0.0)
+                    {
+                        pieEntries.add(new PieEntry(freshManCount*100/totalStandingsCount, "Freshmen"));
+                    }
+                    if(sophmorcount*100/totalStandingsCount > 0.0)
+                    {
+                        pieEntries.add(new PieEntry(sophmorcount*100/totalStandingsCount, "Sophomore"));
+                    }
+                    if(juniorCount*100/totalStandingsCount > 0.0)
+                    {
+                        pieEntries.add(new PieEntry(juniorCount*100/totalStandingsCount, "Junior"));
+                    }
+                    if(seniorCount*100/totalStandingsCount > 0.0)
+                    {
+                        pieEntries.add(new PieEntry(seniorCount*100/totalStandingsCount, "Senior"));
+                    }
+                    if(masterscount*100/totalStandingsCount > 0.0)
+                    {
+                        pieEntries.add(new PieEntry(masterscount*100/totalStandingsCount, "Master's"));
+                    }
+                    if(phdcount*100/totalStandingsCount > 0.0)
+                    {
+                        pieEntries.add(new PieEntry(phdcount*100/totalStandingsCount, "PhD"));
+                    }
+
+                    pieDataSet = new PieDataSet(pieEntries, "");
+                    pieData = new PieData(pieDataSet);
+                    pieData.setValueFormatter(new PercentFormatter());
+                    pie_Chart.setData(pieData);
+                    pieDataSet.setSliceSpace(2f);
+                    pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+                    pieDataSet.setValueTextColor(Color.BLACK);
+                    pieDataSet.setValueTextSize(15f);
+                    pie_Chart.setDrawHoleEnabled(false);
+                    pie_Chart.setDrawEntryLabels(true);
+                    pie_Chart.getLegend().setEnabled(false);
+                    pie_Chart.setEntryLabelColor(Color.BLACK);
+
+//                    String temp= "Freshman: "+ (freshManCount*100/totalStandingsCount) +"\n";
+//                    temp= temp+ "Sophmor: "+ (sophmorcount*100/totalStandingsCount) + "\n";
+//                    temp = temp+ "Junior: "+ (juniorCount*100/totalStandingsCount) + "\n";
+//                    temp= temp+ "Senior: "+ (seniorCount*100/totalStandingsCount) + "\n";
+//                    temp = temp+ "Masters: "+ (masterscount*100/totalStandingsCount) + "\n";
+//                    temp = temp+ "PHD: "+ (phdcount*100/totalStandingsCount) + "\n";
+//
+//                    standings.setText(temp);
 
                 }
                 else{
@@ -204,6 +286,8 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
 
                 professorSelected  = professorList.get(position);
+                ratingBar.setVisibility(View.VISIBLE);
+                ratingBar_c.setVisibility(View.VISIBLE);
 
                 if(position!=0){
                     Log.d("Selected",professorSelected);
@@ -219,74 +303,163 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
                             Log.d("professor",dataSnapshot.toString());
 
 
-
                             String tempData="";
+                            prof_email.setText("");
+                            String peid = "Professor Email: " + dataSnapshot.child("email").getValue().toString();
+                            prof_email.setText(peid);
 
-                            tempData="Email Id: " + dataSnapshot.child("email").getValue().toString()+"\n";
+//                            tempData="Email Id: " + dataSnapshot.child("email").getValue().toString()+"\n";
 
-                            float course_professor_total=Float.parseFloat(dataSnapshot.child("prof_rating").child("total_ratings").getValue().toString());
-                            float course_professor_count=Float.parseFloat(dataSnapshot.child("prof_rating").child("count").getValue().toString());
+                            double totalProfessorRating=0.0;
+                            double sumProfessorRating=0.0;
 
-                            float avg_ratings_professor= course_professor_total/course_professor_count;
+                            for(DataSnapshot snapshot: dataSnapshot.child("prof_rating").getChildren()){
 
-                            tempData=tempData+"Average Professor Rating: " + String.valueOf(avg_ratings_professor)+"\n";
+                                sumProfessorRating=sumProfessorRating+ Integer.parseInt(snapshot.getValue().toString());
+                                totalProfessorRating=totalProfessorRating+1;
 
-                            float course_rating_total=Float.parseFloat(dataSnapshot.child("course_rating").child("total_ratings").getValue().toString());
-                            float course_rating_count=Float.parseFloat(dataSnapshot.child("course_rating").child("count").getValue().toString());
+                            }
 
-                            float avg_ratings= course_rating_total/course_rating_count;
+//                            String avg_professor_Rating = ""+(sumProfessorRating/totalProfessorRating);
 
-                            tempData=tempData+"Average Course Rating: " + String.valueOf(avg_ratings)+"\n";
+//                            tempData=tempData+ "Avg Professor Rating "+avg_professor_Rating+"\n";
 
-                            tempData=tempData+"Assignment Frequency : "+dataSnapshot.child("Assignment_freq").getValue().toString()+"\n";
 
-                            tempData=tempData+ "Course Structure ";
+                            ratingBar.setRating((float)(sumProfessorRating/totalProfessorRating));
 
-                            Log.d("test",dataSnapshot.child("PQE").toString());
+
+                            double totalCourseRating=0.0;
+                            double sumCourseRating=0.0;
+
+                            for(DataSnapshot snapshot: dataSnapshot.child("course_rating").getChildren()){
+
+                                sumCourseRating=sumCourseRating+ Integer.parseInt(snapshot.getValue().toString());
+                                totalCourseRating=totalCourseRating+1;
+
+                            }
+
+//                            String avg_course_Rating = ""+(sumCourseRating/totalCourseRating);
+//
+//                            tempData=tempData+ "Avg Course Rating "+avg_course_Rating+"\n";
+
+                            ratingBar_c.setRating((float)(sumCourseRating/totalCourseRating));
+
+                            String ass = "Assignment Frequency: " + dataSnapshot.child("Assignment_freq").getValue().toString();
+                            assign.setText("");
+                            assign.setText(ass);
+
+//                            tempData=tempData+"Assignment Frequency : "+dataSnapshot.child("Assignment_freq").getValue().toString()+"\n";
+//
+//                            tempData=tempData+ "Course Structure ";
+
 
                             Log.d("pqe",dataSnapshot.child("PQE").getValue().toString());
 
                             for (DataSnapshot objSnapshot: dataSnapshot.child("PQE").getChildren()){
                                 Log.d("inside",objSnapshot.getValue().toString());
-//                                if (objSnapshot.getValue().toString() == "yes" || objSnapshot.getValue().toString() == "True" ) {
-                                    tempData = tempData + objSnapshot.getKey().toString() +" : "+objSnapshot.getValue().toString() + " ";
-//                                }
-//                                else{
-//                                    tempData = tempData + "Nope" + " ";
-//                                }
+//
+                                    tempData = tempData + objSnapshot.getKey().toString() +" : "+objSnapshot.getValue().toString() + "\n";
+//
                             }
 
-                            tempData=tempData+ "\n"+"Offered during : "+dataSnapshot.child("course_offered").getValue().toString();
+                            String off = "Offered during: "+dataSnapshot.child("course_offered").getValue().toString();
+                            offered.setText("");
+                            offered.setText(off);
 
-                            float hours_perweek_total=Float.parseFloat(dataSnapshot.child("hr_per_week").child("total_hours").getValue().toString());
-                            float hours_perweek_count=Float.parseFloat(dataSnapshot.child("hr_per_week").child("count").getValue().toString());
+                            double totalHoursSpent=0.0;
+                            double sumHoursSpent=0.0;
 
-                            float avg_hours= hours_perweek_total/hours_perweek_count;
+                            for(DataSnapshot snapshot: dataSnapshot.child("hr_per_week").getChildren()){
 
-                            tempData=tempData+ "\n"+"Number of Hours Spent outside class/week : "+ String.valueOf(avg_hours);
+                                sumHoursSpent=sumHoursSpent+ Integer.parseInt(snapshot.getValue().toString());
+                                totalHoursSpent=totalHoursSpent+1;
 
-                            tempData=tempData+"\n"+"\n"+"Grade Distribution: ";
+                            }
 
 
-                            float course_grade_total =  Float.parseFloat(dataSnapshot.child("grades").child("total").getValue().toString());
+                            String avg_hours_spent = "Avg Hours Per Week: "+(sumHoursSpent/totalHoursSpent);
+                            avg_hrs.setText("");
+                            avg_hrs.setText(avg_hours_spent);
 
-                            for (DataSnapshot objSnapshot: dataSnapshot.child("grades").getChildren()){
 
-                                float temp_rating =  Float.parseFloat(objSnapshot.getValue().toString());
-                                float percent = (temp_rating*100)/course_grade_total;
+                            Integer ACount=0, AMinusCount =0 , BCount = 0, BMinusCount =0, CCount =0, CMinusCount=0, OtherCount=0;
 
-                                String tempGrade = objSnapshot.getKey().toString();
+                            Integer totalGradesCount = 0;
 
-                                Log.d("tempGrade",tempGrade);
 
-                                if(!tempGrade.equals("total")){
-                                    tempData = tempData + "\n"+ tempGrade +" : " +  String.valueOf(percent)+" ";
+                            for(DataSnapshot snapshot: dataSnapshot.child("grades").getChildren()){
+
+                                if(snapshot.getValue().toString().equals("A")){
+                                    ACount= ACount+1;
                                 }
 
+                                if(snapshot.getValue().toString().equals("A-")){
+                                    AMinusCount=AMinusCount+1;
+                                }
 
-                            }
+                                if(snapshot.getValue().toString().equals("B")){
+                                    BCount=BCount+1;
+                                }
 
+                                if(snapshot.getValue().toString().equals("B-")){
+                                    BMinusCount=BMinusCount+1;
+                                }
 
+                                if(snapshot.getValue().toString().equals("C")){
+                                    CCount=CCount+1;
+                                }
+
+                                if(snapshot.getValue().toString().equals("C-")){
+                                    CMinusCount=CMinusCount+1;
+                                }
+
+                                if(snapshot.getValue().toString().equals("other")){
+                                    OtherCount=OtherCount+1;
+                                }
+
+                                totalGradesCount=totalGradesCount+1;
+
+                            };
+
+                            barEntries = new ArrayList<>();
+                            barEntries.add(new BarEntry(0, ACount*100/totalGradesCount));
+                            barEntries.add(new BarEntry(1, AMinusCount*100/totalGradesCount));
+                            barEntries.add(new BarEntry(2, BCount*100/totalGradesCount));
+                            barEntries.add(new BarEntry(3, BMinusCount*100/totalGradesCount));
+                            barEntries.add(new BarEntry(4, CCount*100/totalGradesCount));
+                            barEntries.add(new BarEntry(5, CMinusCount*100/totalGradesCount));
+                            barEntries.add(new BarEntry(6, OtherCount*100/totalGradesCount));
+
+                            barDataSet = new BarDataSet(barEntries, "Cells");
+
+                            ArrayList<String> labels = new ArrayList<String>();
+                            labels.add("A");
+                            labels.add("A-");
+                            labels.add("B");
+                            labels.add("B-");
+                            labels.add("C");
+                            labels.add("C-");
+                            labels.add("Other");
+
+                            barData = new BarData(barDataSet);
+                            barChart.setData(barData); // set the data and list of labels into chart
+                            barDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+                            barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+                            barChart.animateY(1000);
+
+                            barChart.getXAxis().setGranularityEnabled(true);
+                            barChart.getXAxis().setGranularity(1.0f);
+                            barChart.getXAxis().setLabelCount(barDataSet.getEntryCount());
+                            barData.setBarWidth(1f);
+
+                            barChart.setData(barData);
+
+//                            tempData= tempData+ "A: "+ (ACount*100/totalGradesCount) +  "  A- :"+(AMinusCount*100/totalGradesCount)+"\n";
+//                            tempData= tempData+ "B: "+ (BCount*100/totalGradesCount) +  "  B- :"+(BMinusCount*100/totalGradesCount)+"\n";
+//                            tempData= tempData+ "C: "+ (CCount*100/totalGradesCount) +  "  C- :"+(CMinusCount*100/totalGradesCount)+"\n";
+//                            tempData= tempData+ "Other: "+ (OtherCount*100/totalGradesCount);
+//
+//
                             otherDescription.setText(tempData);
 
                         }

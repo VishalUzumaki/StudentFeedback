@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
@@ -20,6 +21,10 @@ public class TabActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+
+    private String universityName="";
+    private String courseTitle="";
+    private String departmentSelected="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,13 @@ public class TabActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        Intent courseNameIntent = getIntent();
+        universityName = courseNameIntent.getStringExtra("universityName");
+        departmentSelected = courseNameIntent.getStringExtra("departmentSelected");
+        String courseTitlearray[] = courseNameIntent.getStringExtra("courseName").split(" ");
+
+        courseTitle = courseTitlearray[0]+" "+courseTitlearray[1];
     }
 
     private void setupViewPager(ViewPager viewPager) {

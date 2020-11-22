@@ -500,7 +500,7 @@ public class CourseSurvey extends AppCompatActivity {
                     }
 
 
-                    Log.d("endingNaruto", tempStandings);
+                    Log.d("ending", tempStandings);
 
 
                     final DatabaseReference standingReferenceTotal = rootRef.child("Standing").child("total");
