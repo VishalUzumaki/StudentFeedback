@@ -137,7 +137,7 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
                         String tempData="";
                         tempData=objSnapshot.child("text").getValue().toString();
 
-                        tempData=tempData+"\n Upvote :"+ objSnapshot.child("upvote").getValue().toString()+ "     Detaile info->";
+                        tempData=tempData+"\n Upvote :"+ objSnapshot.child("upvote").getValue().toString()+ "     Detailed info->";
 
 
                         commentsListData.add(tempData);
