@@ -18,10 +18,10 @@
     android:backgroundTint="@color/darkBlue1">
 
     <TextView
-        android:textStyle="bold"
         android:id="@+id/label"
         android:paddingVertical="8dp"
         android:paddingHorizontal="16dp"
+        android:fontFamily="@font/rubrik_m"
         android:textSize="20sp"
         android:text="Hello"
         android:textColor="#fff"

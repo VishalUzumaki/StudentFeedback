@@ -19,7 +19,7 @@ public class options extends AppCompatActivity {
 
 
     private TextView toolbar_title;
-    private Button search, suggestion, qa, test;
+    private Button search, suggestion, qa;
     ActionMenuItemView logout;
     private FirebaseAuth authObj;
     private  String UniversityName = "";
@@ -33,16 +33,7 @@ public class options extends AppCompatActivity {
         search = findViewById(R.id.courseSearch);
         suggestion = findViewById(R.id.courseSuggestion);
         qa = findViewById(R.id.QnA);
-        test = findViewById(R.id.test);
         logout = findViewById(R.id.logout);
-
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(getApplicationContext(), TabActivity.class);
-                startActivity(in);
-            }
-        });
 
         authObj = FirebaseAuth.getInstance();
 
@@ -56,7 +47,6 @@ public class options extends AppCompatActivity {
                 Intent in = new Intent(getApplicationContext(), CourseSearch.class);
                 in.putExtra("name",UniversityName);
                 startActivity(in);
-                finish();
             }
         });
 
@@ -66,7 +56,6 @@ public class options extends AppCompatActivity {
                 Intent in = new Intent(getApplicationContext(), underConstruction.class);
                 in.putExtra("name",UniversityName);
                 startActivity(in);
-                finish();
             }
         });
 
@@ -76,7 +65,6 @@ public class options extends AppCompatActivity {
                 Intent in = new Intent(getApplicationContext(), underConstruction.class);
                 in.putExtra("name",UniversityName);
                 startActivity(in);
-                finish();
             }
         });
 

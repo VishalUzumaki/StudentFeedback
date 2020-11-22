@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/appBar"
+            android:id="@+id/appBar_cd"
             android:paddingEnd="20dp"
             app:menu="@menu/iconsbars"
             android:gravity="top"
@@ -416,12 +416,12 @@
                 <Button
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="30dp"
-                    android:id="@+id/addReview"
                     android:fontFamily="@font/rubrik"
                     android:textStyle="bold"
+                    android:background="@drawable/rounded"
+                    android:id="@+id/addReview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/rounded"
                     android:text="Add Review" />
 
             </LinearLayout>

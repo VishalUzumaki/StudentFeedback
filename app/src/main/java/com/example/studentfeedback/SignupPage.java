@@ -69,6 +69,7 @@ public class SignupPage extends AppCompatActivity {
                 in.putExtra("extension",extensionDomain);
                 in.putExtra("image",mBytes);
                 startActivity(in);
+                finish();
             }
         });
 

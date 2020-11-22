@@ -1,6 +1,8 @@
 package com.example.studentfeedback;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItemView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -34,6 +36,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -67,6 +70,12 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
     BarDataSet barDataSet;
     ArrayList barEntries;
 
+    private FirebaseAuth authObj;
+
+    private Toolbar toolbar;
+
+    ActionMenuItemView logout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,12 +87,14 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
         pie_Chart = (PieChart) findViewById(R.id.pieChart);
         prof_email = findViewById(R.id.prof_email);
         avg_hrs = findViewById(R.id.avg_hrs);
+        toolbar = findViewById(R.id.appBar_cd);
+        logout = findViewById(R.id.logout);
         offered = findViewById(R.id.offered);
+        otherDescription = findViewById(R.id.otherDescription);
         barChart = findViewById(R.id.BarChart);
         assign = findViewById(R.id.assign);
         ratingBar = findViewById(R.id.prof_rating);
         ratingBar_c = findViewById(R.id.course_rating);
-        otherDescription = findViewById(R.id.otherDescription);
         allComments = findViewById(R.id.allcomments);
         addReview = findViewById(R.id.addReview);
 
@@ -98,6 +109,14 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
         selectProfessor =  (Spinner) findViewById(R.id.professorSpinner);
 
+        authObj = FirebaseAuth.getInstance();
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logoutUser();
+            }
+        });
+
         professorList =  new ArrayList<String>();
         professorList.add(" ");
 
@@ -105,6 +124,16 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
         universityName = courseNameIntent.getStringExtra("universityName");
         departmentSelected = courseNameIntent.getStringExtra("departmentSelected");
         String courseTitlearray[] = courseNameIntent.getStringExtra("courseName").split(" ");
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(getApplicationContext(), CourseSearch.class);
+                in.putExtra("name",universityName);
+                startActivity(in);
+                finish();
+            }
+        });
 
         courseTitle = courseTitlearray[0]+" "+courseTitlearray[1];
         String courseHeader = "";
@@ -116,7 +145,7 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
         courseName.setText(departmentSelected+" "+courseHeader);
 
 
-         database = FirebaseDatabase.getInstance();
+        database = FirebaseDatabase.getInstance();
 
         DatabaseReference subjectRef = database.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle);
 
@@ -279,6 +308,13 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    protected void logoutUser() {
+        authObj.signOut();
+        Intent in = new Intent(getApplicationContext(), SelectUniversity.class);
+        startActivity(in);
+        finish();
+    }
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Log.d("professor","selected");
@@ -378,10 +414,10 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
                             String avg_hours_spent = ""+(sumHoursSpent/totalHoursSpent);
 
-                            tempData=tempData+ "\n Avg Hours Spent outside class "+avg_hours_spent+"\n";
+//                            tempData=tempData+ "\n Avg Hours Spent outside class "+avg_hours_spent+"\n";
 
 
-                            tempData=tempData+" \n Grade Distribution: \n";
+//                            tempData=tempData+" \n Grade Distribution: \n";
 
                             String avg_hours = "Avg Hours Per Week: "+(sumHoursSpent/totalHoursSpent);
                             avg_hrs.setText("");
@@ -467,10 +503,10 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 //
 //
 
-                            tempData= tempData+ "A: "+ (ACount*100/totalGradesCount) +  "  A- :"+(AMinusCount*100/totalGradesCount)+" ";
-                            tempData= tempData+ "B: "+ (BCount*100/totalGradesCount) +  "  B- :"+(BMinusCount*100/totalGradesCount)+" ";
-                            tempData= tempData+ "C: "+ (CCount*100/totalGradesCount) +  "  C- :"+(CMinusCount*100/totalGradesCount)+" ";
-                            tempData= tempData+ "Other: "+ (OtherCount*100/totalGradesCount);
+//                            tempData= tempData+ "A: "+ (ACount*100/totalGradesCount) +  "  A- :"+(AMinusCount*100/totalGradesCount)+" ";
+//                            tempData= tempData+ "B: "+ (BCount*100/totalGradesCount) +  "  B- :"+(BMinusCount*100/totalGradesCount)+" ";
+//                            tempData= tempData+ "C: "+ (CCount*100/totalGradesCount) +  "  C- :"+(CMinusCount*100/totalGradesCount)+" ";
+//                            tempData= tempData+ "Other: "+ (OtherCount*100/totalGradesCount);
 
 
                             otherDescription.setText(tempData);
@@ -495,4 +531,5 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
     public void onNothingSelected(AdapterView<?> parent) {
         Toast.makeText(CourseDetail.this,"not selected",Toast.LENGTH_LONG).show();
     }
+
 }

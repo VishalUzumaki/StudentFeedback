@@ -5,6 +5,7 @@ import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,7 +41,6 @@ public class CourseSearch extends AppCompatActivity {
     ActionMenuItemView logout;
     Toolbar toolbar;
 
-
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -65,6 +65,7 @@ public class CourseSearch extends AppCompatActivity {
                 Intent in = new Intent(getApplicationContext(), options.class);
                 in.putExtra("name",universityName);
                 startActivity(in);
+                finish();
             }
         });
 

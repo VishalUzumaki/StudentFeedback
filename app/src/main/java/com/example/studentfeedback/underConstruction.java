@@ -35,6 +35,7 @@ public class underConstruction extends AppCompatActivity {
                 Intent in = new Intent(getApplicationContext(), options.class);
                 in.putExtra("name",UniversityName);
                 startActivity(in);
+                finish();
             }
         });
 

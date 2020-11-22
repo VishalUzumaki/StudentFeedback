@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MatTheme">
-        <activity android:name=".dFragment"></activity>
+        <activity android:name=".dFragment"/>
         <activity android:name=".TabActivity" />
         <activity android:name=".underConstruction" />
         <activity android:name=".options" />

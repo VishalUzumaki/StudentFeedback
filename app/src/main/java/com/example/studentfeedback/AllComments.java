@@ -2,6 +2,8 @@ package com.example.studentfeedback;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItemView;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,6 +34,10 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
     private String courseTitle="";
     private String departmentSelected="";
 
+    private FirebaseAuth authObj;
+    private Toolbar toolbar;
+    ActionMenuItemView logout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +52,37 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
         idofComments = new ArrayList<>();
         idofComments.add("0");
 
+        toolbar = findViewById(R.id.appBar_com);
+        logout = findViewById(R.id.logout);
 
-        final ArrayAdapter commentsAdapter= new ArrayAdapter(this, R.layout.course_list_item,commentsListData);
+        Intent baseDetails = getIntent();
+
+        universityName=baseDetails.getStringExtra("University");
+        departmentSelected = baseDetails.getStringExtra("Department");
+        courseTitle = baseDetails.getStringExtra("CourseName");
+
+        authObj = FirebaseAuth.getInstance();
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logoutUser();
+            }
+        });
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(getApplicationContext(), CourseDetail.class);
+                in.putExtra("universityName",universityName);
+                in.putExtra("departmentSelected",departmentSelected);
+                in.putExtra("courseName",courseTitle);
+                startActivity(in);
+                finish();
+            }
+        });
+
+
+        final ArrayAdapter commentsAdapter= new ArrayAdapter(this, R.layout.activity_individual_comment, R.id.description, commentsListData);
 
         commentsList.setAdapter(commentsAdapter);
 
@@ -74,12 +110,6 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
         });
 
 //        commentsList.setOnItemSelectedListener(AllComments.this);
-
-        Intent baseDetails = getIntent();
-
-        universityName=baseDetails.getStringExtra("University");
-        departmentSelected = baseDetails.getStringExtra("Department");
-        courseTitle = baseDetails.getStringExtra("CourseName");
 
         database = FirebaseDatabase.getInstance();
 
@@ -117,14 +147,18 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-
-
-
         });
 
 
 
 
+    }
+
+    protected void logoutUser() {
+        authObj.signOut();
+        Intent in = new Intent(getApplicationContext(), SelectUniversity.class);
+        startActivity(in);
+        finish();
     }
 
     @Override

@@ -11,23 +11,72 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="396dp"
-            android:layout_height="145dp"
-            android:ems="10"
-            android:inputType="textCapSentences|textMultiLine"
-            android:scrollHorizontally="false"
-            android:text="Name"
-            android:textSize="24sp" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded2"
+            android:backgroundTint="@color/lightGrey">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:ems="10"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:scrollHorizontally="false"
+                    android:hint="comment"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:weightSum="1"
+                    android:paddingBottom="3dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/text_up"
+                        android:layout_weight="0.5"
+                        android:text="Upvotes:"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/text_down"
+                        android:layout_weight="0.5"
+                        android:text="Downvotes:"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
+            android:weightSum="3"
+            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_width="match_parent"
             android:layout_height="57dp"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/upvote"
+                android:layout_marginHorizontal="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -35,12 +84,14 @@
 
             <Button
                 android:id="@+id/downvote"
+                android:layout_marginHorizontal="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="DownVote" />
 
             <Button
+                android:layout_marginHorizontal="5dp"
                 android:id="@+id/report"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

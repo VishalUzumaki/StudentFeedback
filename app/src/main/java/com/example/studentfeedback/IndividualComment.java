@@ -52,8 +52,6 @@ public class IndividualComment extends AppCompatActivity {
 
         final DatabaseReference commentRef = database.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle).child("comments").child(commentId);
 
-
-
         commentRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -67,8 +65,6 @@ public class IndividualComment extends AppCompatActivity {
                 downvoteRank = Integer.parseInt(dataSnapshot.child("downvote").getValue().toString());
                 strikeRank = Integer.parseInt(dataSnapshot.child("strike").getValue().toString());
 
-//                upvote.setText("Upvote");
-
             }
 
             @Override
@@ -76,8 +72,6 @@ public class IndividualComment extends AppCompatActivity {
 
             }
         });
-
-
 
         upvote.setOnClickListener(new View.OnClickListener() {
             @Override

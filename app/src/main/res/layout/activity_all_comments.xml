@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".AllComments">
 
     <LinearLayout
@@ -11,17 +12,44 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/Coursename"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/appBar_com"
+            android:paddingEnd="20dp"
+            app:menu="@menu/iconsbars"
+            android:gravity="top"
+            android:minHeight="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:background="@android:color/white"
-            android:text="Comments"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="24sp" />
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:titleTextColor="@android:color/white"
+            app:navigationIcon="@drawable/back_arrow"
+            android:background="?attr/colorPrimaryDark">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:text="Comments"
+                android:textColor="@android:color/white"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+<!--        <TextView-->
+<!--            android:paddingVertical="16dp"-->
+<!--            android:gravity="center_horizontal"-->
+<!--            android:id="@+id/Coursename"-->
+<!--            android:textStyle="bold"-->
+<!--            android:fontFamily="@font/rubrik"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Comments"-->
+<!--            android:textColor="#000"-->
+<!--            android:textSize="26sp" />-->
 
         <ListView
+            android:layout_marginTop="15dp"
             android:id="@+id/commentsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

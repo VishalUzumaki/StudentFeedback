@@ -2,6 +2,8 @@ package com.example.studentfeedback;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItemView;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -53,9 +56,6 @@ public class CourseSurvey extends AppCompatActivity {
     private Integer tempCourseDifficulty=0,getCourseDifficulty=0;
     private Integer temp_hr_weeks=0, getTemp_hr_weeks=0;
 
-
-
-
     @IgnoreExtraProperties
     public class Comments {
 
@@ -76,13 +76,14 @@ public class CourseSurvey extends AppCompatActivity {
 
     }
 
+    private FirebaseAuth authObj;
+    private Toolbar toolbar;
+    ActionMenuItemView logout;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_survey);
-
-
 
         standingsList = findViewById(R.id.standingsReview);
 
@@ -95,16 +96,39 @@ public class CourseSurvey extends AppCompatActivity {
         standingsOptions.add("senior");
         standingsOptions.add("sophomor");
 
+        Intent getDetials = getIntent();
 
+        universityName=getDetials.getStringExtra("University");
+        departmentSelected=getDetials.getStringExtra("Department");
+        courseTitle=getDetials.getStringExtra("CourseName");
 
         professorList = findViewById(R.id.porfessorSelection);
+        toolbar = findViewById(R.id.appBar_fb);
+        logout = findViewById(R.id.logout);
+
+        authObj = FirebaseAuth.getInstance();
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logoutUser();
+            }
+        });
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(getApplicationContext(), CourseDetail.class);
+                in.putExtra("universityName",universityName);
+                in.putExtra("departmentSelected",departmentSelected);
+                in.putExtra("courseName",courseTitle);
+                startActivity(in);
+                finish();
+            }
+        });
 
         professorOptions = new ArrayList<String>();
 
         professorOptions.add(" ");
-
-
-
 
         gradesList = findViewById(R.id.gradeReview);
 
@@ -117,8 +141,6 @@ public class CourseSurvey extends AppCompatActivity {
         gradesOptions.add("C");
         gradesOptions.add("C-");
         gradesOptions.add("other");
-
-
 
 
         professorRatingValue = findViewById(R.id.professorRatingReview);
@@ -135,22 +157,8 @@ public class CourseSurvey extends AppCompatActivity {
             scalingRate.add(String.valueOf(i));
         }
 
-
-
         commentValue = findViewById(R.id.commentsReview);
-
-
-
         submitReview = findViewById(R.id.submitSurvey);
-
-
-        Intent getDetials = getIntent();
-
-        universityName=getDetials.getStringExtra("University");
-        departmentSelected=getDetials.getStringExtra("Department");
-        courseTitle=getDetials.getStringExtra("CourseName");
-
-
 
         final ArrayAdapter<String> ratingAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, scalingRate);
 
@@ -316,14 +324,9 @@ public class CourseSurvey extends AppCompatActivity {
 
 
                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
-
                 DatabaseReference rootRef = database.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle);
-
 //                root reference will refer to the subject from here we have to set to its sub propoerties like
 //                reference to rating, syllabus, etc.
-
-
-
                 if(finalProfessor.length()>0){
 
                     DatabaseReference reviewProfessor = rootRef.child("professor").child(finalProfessor);
@@ -351,8 +354,6 @@ public class CourseSurvey extends AppCompatActivity {
                     Toast.makeText(CourseSurvey.this,"Select Professor", Toast.LENGTH_LONG).show();
                 }
 
-
-
 //              adding  comment
                 DatabaseReference reviewReference = rootRef.child("comments");
 
@@ -374,10 +375,12 @@ public class CourseSurvey extends AppCompatActivity {
                 }
 
                 Toast.makeText(CourseSurvey.this,"Review posted",Toast.LENGTH_LONG).show();
-
-
-
-//                startActivity(objectQ);
+                Intent in = new Intent(getApplicationContext(), CourseDetail.class);
+                in.putExtra("universityName",universityName);
+                in.putExtra("departmentSelected",departmentSelected);
+                in.putExtra("courseName",courseTitle);
+                startActivity(in);
+                finish();
             }
 
 
@@ -386,5 +389,12 @@ public class CourseSurvey extends AppCompatActivity {
         });
 
 
+    }
+
+    protected void logoutUser() {
+        authObj.signOut();
+        Intent in = new Intent(getApplicationContext(), SelectUniversity.class);
+        startActivity(in);
+        finish();
     }
 }

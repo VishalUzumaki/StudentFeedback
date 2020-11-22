@@ -56,6 +56,7 @@
                 android:paddingHorizontal="12dp"
                 android:id="@+id/search"
                 android:inputType="text"
+                android:fontFamily="@font/rubrik"
                 android:background="@drawable/rounded2"
                 android:layout_weight="0.9"
                 android:layout_width="match_parent"
@@ -80,6 +81,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:fontFamily="@font/rubrik"
             android:layout_marginHorizontal="20dp"
             android:text="Select Department"
             android:textColor="#000" />
@@ -95,10 +98,10 @@
             android:backgroundTint="@color/lightGrey" />
 
         <TextView
-            android:textStyle="bold"
             android:textSize="18sp"
             android:textColor="#000"
             android:layout_marginTop="15dp"
+            android:fontFamily="@font/rubrik_sb"
             android:layout_marginHorizontal="20dp"
             android:text="List of courses:"
             android:layout_width="match_parent"
