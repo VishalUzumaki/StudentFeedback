@@ -376,10 +376,16 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
                             }
 
+                            String avg_hours_spent = ""+(sumHoursSpent/totalHoursSpent);
 
-                            String avg_hours_spent = "Avg Hours Per Week: "+(sumHoursSpent/totalHoursSpent);
+                            tempData=tempData+ "\n Avg Hours Spent outside class "+avg_hours_spent+"\n";
+
+
+                            tempData=tempData+" \n Grade Distribution: \n";
+
+                            String avg_hours = "Avg Hours Per Week: "+(sumHoursSpent/totalHoursSpent);
                             avg_hrs.setText("");
-                            avg_hrs.setText(avg_hours_spent);
+                            avg_hrs.setText(avg_hours);
 
 
                             Integer ACount=0, AMinusCount =0 , BCount = 0, BMinusCount =0, CCount =0, CMinusCount=0, OtherCount=0;
@@ -460,6 +466,13 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 //                            tempData= tempData+ "Other: "+ (OtherCount*100/totalGradesCount);
 //
 //
+
+                            tempData= tempData+ "A: "+ (ACount*100/totalGradesCount) +  "  A- :"+(AMinusCount*100/totalGradesCount)+" ";
+                            tempData= tempData+ "B: "+ (BCount*100/totalGradesCount) +  "  B- :"+(BMinusCount*100/totalGradesCount)+" ";
+                            tempData= tempData+ "C: "+ (CCount*100/totalGradesCount) +  "  C- :"+(CMinusCount*100/totalGradesCount)+" ";
+                            tempData= tempData+ "Other: "+ (OtherCount*100/totalGradesCount);
+
+
                             otherDescription.setText(tempData);
 
                         }
