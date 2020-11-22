@@ -82,7 +82,7 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
         });
 
 
-        final ArrayAdapter commentsAdapter= new ArrayAdapter(this, R.layout.activity_individual_comment, R.id.description, commentsListData);
+        final ArrayAdapter commentsAdapter= new ArrayAdapter(this, R.layout.simple_all_comments_layout, commentsListData);
 
         commentsList.setAdapter(commentsAdapter);
 
@@ -91,11 +91,11 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Toast.makeText(AllComments.this,"yes",Toast.LENGTH_LONG).show();
 
-                Log.d("called","setonitem selected");
+                Log.d("called", "setonitem selected");
 
                 String commentSelected = commentsListData.get(position);
 
-                if(position!=0) {
+                if (position != 0) {
 
                     Intent object = new Intent(AllComments.this, IndividualComment.class);
 
@@ -134,7 +134,13 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
 
                     Integer strikeCount = Integer.parseInt(objSnapshot.child("strike").getValue().toString());
                     if(strikeCount<3) {
-                        commentsListData.add(objSnapshot.child("text").getValue().toString());
+                        String tempData="";
+                        tempData=objSnapshot.child("text").getValue().toString();
+
+                        tempData=tempData+"\n Upvote :"+ objSnapshot.child("upvote").getValue().toString()+ "     Detaile info->";
+
+
+                        commentsListData.add(tempData);
                         idofComments.add(objSnapshot.getKey().toString());
                         }
                 }
