@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -16,6 +17,8 @@ public class underConstruction extends AppCompatActivity {
     ActionMenuItemView logout;
     private FirebaseAuth authObj;
     private String UniversityName = "";
+    private String check = "";
+    private TextView exp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +27,24 @@ public class underConstruction extends AppCompatActivity {
 
         authObj = FirebaseAuth.getInstance();
         toolbar = findViewById(R.id.appBar);
+        exp = findViewById(R.id.explain);
 
         Intent ob = getIntent();
 
         UniversityName = ob.getStringExtra("name");
+        check = ob.getStringExtra("check");
+
+        if(check.equals("sug"))
+        {
+            String s = "A course suggestion feature presenting the user with a list of course based on their preferences";
+            exp.setText(s);
+        }
+        else if(check.equals("qa"))
+        {
+            String s = "A discussion forum for user to discuss and help other users with questions they have regarding courses";
+            exp.setText(s);
+        }
+
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

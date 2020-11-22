@@ -72,6 +72,7 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("checker1", courseTitle);
                 Intent in = new Intent(getApplicationContext(), CourseDetail.class);
                 in.putExtra("universityName",universityName);
                 in.putExtra("departmentSelected",departmentSelected);
@@ -125,19 +126,22 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
                 commentsListData.clear();
                 idofComments.clear();
 
-                commentsListData.add("");
-                idofComments.add("0");
+//                commentsListData.add("");
+//                idofComments.add("0");
 
+                int count = 0;
                 for (DataSnapshot objSnapshot: dataSnapshot.getChildren()) {
+
+                    count = count + 1;
 
                     Log.d("comments details",objSnapshot.getValue().toString());
 
                     Integer strikeCount = Integer.parseInt(objSnapshot.child("strike").getValue().toString());
                     if(strikeCount<3) {
-                        String tempData="";
-                        tempData=objSnapshot.child("text").getValue().toString();
-
-                        tempData=tempData+"\n Upvote :"+ objSnapshot.child("upvote").getValue().toString()+ "     Detailed info->";
+                        String tempData="comment: " + count;
+//                        tempData=objSnapshot.child("text").getValue().toString();
+//
+//                        tempData=tempData+"\n Upvote :"+ objSnapshot.child("upvote").getValue().toString()+ "     Detailed info->";
 
 
                         commentsListData.add(tempData);
@@ -173,17 +177,17 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
 
         String commentSelected = commentsListData.get(position);
 
-        if(position!=0) {
 
-            Intent object = new Intent(AllComments.this, IndividualComment.class);
 
-            object.putExtra("UniversityName", universityName);
-            object.putExtra("Department", departmentSelected);
-            object.putExtra("CouseSelected", courseTitle);
-            object.putExtra("Comment", idofComments.get(position));
+        Intent object = new Intent(AllComments.this, IndividualComment.class);
 
-            startActivity(object);
-        }
+        object.putExtra("UniversityName", universityName);
+        object.putExtra("Department", departmentSelected);
+        object.putExtra("CouseSelected", courseTitle);
+        object.putExtra("Comment", idofComments.get(position));
+
+        startActivity(object);
+
     }
 
     @Override

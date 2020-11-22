@@ -313,6 +313,26 @@
 
                         <TextView
                             android:layout_marginTop="10dp"
+                            android:id="@+id/diff_head"
+                            android:textSize="20sp"
+                            android:text="Course Difficulty:"
+                            android:textColor="#000"
+                            android:fontFamily="@font/rubrik"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                        <RatingBar
+                            android:id="@+id/course_diff"
+                            android:layout_marginTop="10dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:saveEnabled="true"
+                            android:visibility="gone"
+                            android:isIndicator="true"
+                            android:numStars="5"/>
+
+                        <TextView
+                            android:layout_marginTop="10dp"
                             android:id="@+id/offered"
                             android:textSize="20sp"
                             android:text="Course Offered During: "

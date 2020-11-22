@@ -8,6 +8,8 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -41,6 +43,8 @@ public class CourseSearch extends AppCompatActivity {
     ActionMenuItemView logout;
     Toolbar toolbar;
 
+    ProgressDialog progressDialog;
+
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -68,6 +72,13 @@ public class CourseSearch extends AppCompatActivity {
                 finish();
             }
         });
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Getting Information");
+        progressDialog.setProgress(10);
+        progressDialog.setMax(100);
+        progressDialog.setMessage("Please Wait...");
+        progressDialog.show();
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,7 +191,7 @@ public class CourseSearch extends AppCompatActivity {
                  }
 
                 }
-
+                progressDialog.dismiss();
                 adapter.notifyDataSetChanged() ;
             }
 
@@ -314,6 +325,7 @@ public class CourseSearch extends AppCompatActivity {
             }
         });
     }
+
 
     protected void logoutUser() {
         authObj.signOut();

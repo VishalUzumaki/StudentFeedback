@@ -46,8 +46,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <TextView
+                android:textColor="@android:color/black"
+                android:textSize="23sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/rubrik"
+                android:text="Text"
+                android:gravity="center_horizontal"
+                android:id="@+id/explain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
             <ImageView
-                android:layout_width="150dp"
+                android:layout_marginTop="40dp"
+                android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:src="@drawable/warning"/>
 

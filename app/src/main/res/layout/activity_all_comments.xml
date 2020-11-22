@@ -49,6 +49,8 @@
 <!--            android:textSize="26sp" />-->
 
         <ListView
+            android:dividerHeight="8sp"
+            android:divider="@android:color/transparent"
             android:layout_marginTop="15dp"
             android:id="@+id/commentsList"
             android:layout_width="match_parent"

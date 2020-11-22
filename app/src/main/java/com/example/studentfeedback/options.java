@@ -54,7 +54,9 @@ public class options extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(getApplicationContext(), underConstruction.class);
+                String s = "sug";
                 in.putExtra("name",UniversityName);
+                in.putExtra("check", s);
                 startActivity(in);
             }
         });
@@ -63,7 +65,9 @@ public class options extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(getApplicationContext(), underConstruction.class);
+                String s = "qa";
                 in.putExtra("name",UniversityName);
+                in.putExtra("check", s);
                 startActivity(in);
             }
         });

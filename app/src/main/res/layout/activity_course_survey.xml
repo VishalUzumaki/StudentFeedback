@@ -153,7 +153,7 @@
                     android:fontFamily="@font/rubrik"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Coursse Rating" />
+                    android:text="Course Rating" />
 
                 <Spinner
                     android:id="@+id/courseRatingreview"
@@ -183,6 +183,7 @@
                     android:background="@drawable/rounded2"
                     android:hint="Hours spent per week"
                     android:id="@+id/hoursReview"
+                    android:text="0"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:inputType="number" />

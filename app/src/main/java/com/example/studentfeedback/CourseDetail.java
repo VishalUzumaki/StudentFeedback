@@ -62,8 +62,7 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
     PieData pieData;
     PieDataSet pieDataSet;
     ArrayList pieEntries;
-    private RatingBar ratingBar;
-    private RatingBar ratingBar_c;
+    private RatingBar ratingBar, ratingBar_c, ratingBar_d;
     private BarChart barChart;
 
     BarData barData;
@@ -95,6 +94,7 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
         assign = findViewById(R.id.assign);
         ratingBar = findViewById(R.id.prof_rating);
         ratingBar_c = findViewById(R.id.course_rating);
+        ratingBar_d = findViewById(R.id.course_diff);
         allComments = findViewById(R.id.allcomments);
         addReview = findViewById(R.id.addReview);
 
@@ -136,6 +136,8 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
         });
 
         courseTitle = courseTitlearray[0]+" "+courseTitlearray[1];
+        Log.d("checker2", courseTitle);
+
         String courseHeader = "";
         for(int i=0;i<courseTitlearray.length;i++)
         {
@@ -281,7 +283,6 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View v) {
                 Intent object = new Intent(CourseDetail.this,AllComments.class);
-
                 object.putExtra("University",universityName);
                 object.putExtra("Department",departmentSelected);
                 object.putExtra("CourseName",courseTitle);
@@ -324,6 +325,7 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
                 professorSelected  = professorList.get(position);
                 ratingBar.setVisibility(View.VISIBLE);
                 ratingBar_c.setVisibility(View.VISIBLE);
+                ratingBar_d.setVisibility(View.VISIBLE);
 
                 if(position!=0){
                     Log.d("Selected",professorSelected);
@@ -346,6 +348,7 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
 //                            tempData="Email Id: " + dataSnapshot.child("email").getValue().toString()+"\n";
 
+                            // PROFESSOR RATINGS
                             double totalProfessorRating=0.0;
                             double sumProfessorRating=0.0;
 
@@ -356,9 +359,21 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
                             }
 
-//                            String avg_professor_Rating = ""+(sumProfessorRating/totalProfessorRating);
+                            // DIFFICULTY RATINGS
 
-//                            tempData=tempData+ "Avg Professor Rating "+avg_professor_Rating+"\n";
+                            double total_difficulty = 0.0;
+                            double sum_difficulty = 0.0;
+
+                            for(DataSnapshot snapshot: dataSnapshot.child("difficulty").getChildren()){
+
+                                sum_difficulty = sum_difficulty+ Integer.parseInt(snapshot.getValue().toString());
+                                total_difficulty = total_difficulty + 1;
+                            }
+
+                            String te = "ASASA: " + sum_difficulty/total_difficulty;
+                            Log.d("ASASA", te);
+
+                            ratingBar_d.setRating((float)(sum_difficulty/total_difficulty));
 
 
                             ratingBar.setRating((float)(sumProfessorRating/totalProfessorRating));

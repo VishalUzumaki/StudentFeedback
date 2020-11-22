@@ -18,8 +18,8 @@ import com.google.firebase.database.ValueEventListener;
 public class IndividualComment extends AppCompatActivity {
 
 
-    private Button upvote,downvote,report;
-    private TextView description;
+    private Button upvote,downvote,report, back;
+    private TextView description, tups, tdowns;
 
     private String universityName="";
     private String courseTitle="";
@@ -39,7 +39,9 @@ public class IndividualComment extends AppCompatActivity {
         upvote = findViewById(R.id.upvote);
         downvote = findViewById(R.id.downvote);
         report = findViewById(R.id.report);
-
+        tups = findViewById(R.id.text_up);
+        tdowns = findViewById(R.id.text_down);
+        back = findViewById(R.id.extended_fab);
 
         Intent commentDetails = getIntent();
 
@@ -47,6 +49,18 @@ public class IndividualComment extends AppCompatActivity {
         departmentSelected=commentDetails.getStringExtra("Department");
         courseTitle=commentDetails.getStringExtra("CouseSelected");
         commentId=commentDetails.getStringExtra("Comment");
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(getApplicationContext(), AllComments.class);
+                in.putExtra("University", universityName);
+                in.putExtra("Department", departmentSelected);
+                in.putExtra("CourseName", courseTitle);
+                startActivity(in);
+                finish();
+            }
+        });
 
         database = FirebaseDatabase.getInstance();
 
@@ -56,8 +70,12 @@ public class IndividualComment extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                String temp_descripton =dataSnapshot.child("text").getValue().toString()+"\n\n";
-                temp_descripton=temp_descripton+ "Upvote : "+dataSnapshot.child("upvote").getValue().toString() + "  |  Downvote : "+ dataSnapshot.child("downvote").getValue().toString();
+                String temp_descripton =dataSnapshot.child("text").getValue().toString();
+                String u = "Upvotes: " + dataSnapshot.child("upvote").getValue().toString();
+                String d = "Downvotes: " + dataSnapshot.child("downvote").getValue().toString();
+                tups.setText(u);
+                tdowns.setText(d);
+//                temp_descripton=temp_descripton+ "Upvote : "+dataSnapshot.child("upvote").getValue().toString() + "  |  Downvote : "+ dataSnapshot.child("downvote").getValue().toString();
 
                 description.setText(temp_descripton);
 
