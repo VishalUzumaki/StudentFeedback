@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,13 +49,15 @@ public class CourseSurvey extends AppCompatActivity {
     private List<String> scalingRate;
 
 
-    private String finalStandings="",finalGrade="",finalProfessor="", finalProfessorRating="", finalCourseRating="", finalCourseDifficulty="";
+    private String finalStandings="",finalGrade="A",finalProfessor="", finalProfessorRating="0", finalCourseRating="0", finalCourseDifficulty="0";
 
     private String tempStandings="",tempTotalStandings="";
     private Integer tempCourseRatings=0,getTempCourseRatingsTotal=0;
     private Integer tempProfessorRatings=0,getProfessorRatingsTotal=0;
     private Integer tempCourseDifficulty=0,getCourseDifficulty=0;
     private Integer temp_hr_weeks=0, getTemp_hr_weeks=0;
+
+    private String courseNameTitle="";
 
     @IgnoreExtraProperties
     public class Comments {
@@ -75,6 +78,11 @@ public class CourseSurvey extends AppCompatActivity {
         }
 
     }
+
+
+//     Comments is a model class created to add text based review along with timestamp and other feature to firebase data.
+//    as the comments are stored as an entire objects in the database
+
 
     private FirebaseAuth authObj;
     private Toolbar toolbar;
@@ -143,10 +151,17 @@ public class CourseSurvey extends AppCompatActivity {
         gradesOptions.add("other");
 
 
+
+//        mainly using Spinners to avoid any type of data mismatch
+        // providing a same scale of 1 to 5 to for all type of queestionaries
+
+
         professorRatingValue = findViewById(R.id.professorRatingReview);
         courseRatingValue = findViewById(R.id.courseRatingreview);
         hoursValue = findViewById(R.id.hoursReview);
         difficultyValue = findViewById(R.id.difficultyreview);
+
+
 
 
         scalingRate = new ArrayList<String>();
@@ -318,6 +333,32 @@ public class CourseSurvey extends AppCompatActivity {
 
 
 
+        final FirebaseDatabase databaseForCourseName = FirebaseDatabase.getInstance();
+        DatabaseReference CourseNameRef = databaseForCourseName.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle);
+
+
+
+
+//        setting the CousrseName which will be used while navigating back to the CourseDetails Page
+
+
+        DatabaseReference courseNameReference = CourseNameRef.child("courseName");
+
+        courseNameReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                courseNameTitle = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
         submitReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -325,28 +366,30 @@ public class CourseSurvey extends AppCompatActivity {
 
                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference rootRef = database.getReference().child("University").child(universityName).child(departmentSelected).child(courseTitle);
+
+
 //                root reference will refer to the subject from here we have to set to its sub propoerties like
 //                reference to rating, syllabus, etc.
                 if(finalProfessor.length()>0){
 
                     DatabaseReference reviewProfessor = rootRef.child("professor").child(finalProfessor);
 
-                    if(!finalCourseRating.equals("")) {
+                    if(!finalCourseRating.equals("") && !finalCourseRating.equals(" ")) {
                         reviewProfessor.child("course_rating").push().setValue(Integer.parseInt(finalCourseRating));
                     }
 
-                    if(!finalCourseDifficulty.equals("")) {
+                    if(!finalCourseDifficulty.equals("") && !finalCourseDifficulty.equals(" ") ) {
                         reviewProfessor.child("difficulty").push().setValue(Integer.parseInt(finalCourseDifficulty));
                     }
 
-                    if(!finalGrade.equals("")) {
+                    if(!finalGrade.equals("") && !finalGrade.equals(" ")) {
                         reviewProfessor.child("grades").push().setValue(finalGrade);
                     }
 
 
                     reviewProfessor.child("hr_per_week").push().setValue(Integer.parseInt(hoursValue.getText().toString()));
 
-                    if(!finalProfessorRating.equals("")) {
+                    if(!finalProfessorRating.equals("") && !finalProfessorRating.equals(" ")) {
                         reviewProfessor.child("prof_rating").push().setValue(Integer.parseInt(finalProfessorRating));
                     }
 
@@ -374,13 +417,16 @@ public class CourseSurvey extends AppCompatActivity {
                     standingReference.push().setValue(finalStandings);
                 }
 
-                Toast.makeText(CourseSurvey.this,"Review posted",Toast.LENGTH_LONG).show();
-                Intent in = new Intent(getApplicationContext(), CourseDetail.class);
-                in.putExtra("universityName",universityName);
-                in.putExtra("departmentSelected",departmentSelected);
-                in.putExtra("courseName",courseTitle);
-                startActivity(in);
-                finish();
+
+                    Toast.makeText(CourseSurvey.this, "Review posted", Toast.LENGTH_LONG).show();
+                    Intent in = new Intent(getApplicationContext(), CourseDetail.class);
+                    in.putExtra("universityName", universityName);
+                    in.putExtra("departmentSelected", departmentSelected);
+                    Log.d("courseNameTitle", courseNameTitle);
+                    in.putExtra("courseName", courseTitle + " " + courseNameTitle);
+                    startActivity(in);
+                    finish();
+
             }
 
 
@@ -388,6 +434,21 @@ public class CourseSurvey extends AppCompatActivity {
 
         });
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = authObj.getCurrentUser();
+
+//        checking if the user has logged out
+        if(currentUser == null){
+
+            Intent openDashboard = new Intent(CourseSurvey.this, SelectUniversity.class);
+            startActivity(openDashboard);
+            finish();
+        }
 
     }
 

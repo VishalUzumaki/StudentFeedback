@@ -26,13 +26,21 @@ public class SelectUniversity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_university);
 
+
+
         authObj = FirebaseAuth.getInstance();
+
+//        setting the recycler view for selecting university
+//        on selecting the course we will be appending the domain name @iu.edu for Indiana University
+//        @nyu.edu for NYU university, etc.
 
         universityNames = findViewById(R.id.recycleViewList);
         universityNames.setLayoutManager(new LinearLayoutManager(this));
 
         uniNameAdapter = new UniNameAdapter( SelectUniversity.this,getNamesList());
         universityNames.setAdapter(uniNameAdapter);
+
+
 
     }
 
@@ -42,6 +50,7 @@ public class SelectUniversity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = authObj.getCurrentUser();
 
+//        checking if the user has already logged in and if such then navigating him/her to the Dashboard
         if(currentUser != null){
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", 0); // 0 - for private mode
             String uniName=pref.getString("University", null);

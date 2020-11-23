@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,6 +29,7 @@ public class IndividualComment extends AppCompatActivity {
     private String commentId;
 
     private FirebaseDatabase database;
+    private FirebaseAuth authObj;
 
     private Integer upvoteRank,downvoteRank,strikeRank;
 
@@ -35,6 +38,8 @@ public class IndividualComment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_individual_comment);
 
+
+        authObj = FirebaseAuth.getInstance();
         description = findViewById(R.id.description);
         upvote = findViewById(R.id.upvote);
         downvote = findViewById(R.id.downvote);
@@ -91,6 +96,12 @@ public class IndividualComment extends AppCompatActivity {
             }
         });
 
+
+
+//        Providing three action buttons either to upvote downvote or report any comments.
+//        comments with more then 3 strikes will no longer be displayed.
+//        currently allwouing multiple reports from the same person.
+
         upvote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,5 +128,21 @@ public class IndividualComment extends AppCompatActivity {
 
     }
 
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = authObj.getCurrentUser();
+
+//        checking if the user has logged out
+        if(currentUser == null){
+
+            Intent openDashboard = new Intent(IndividualComment.this, SelectUniversity.class);
+            startActivity(openDashboard);
+            finish();
+        }
+
+    }
 
 }

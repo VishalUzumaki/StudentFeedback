@@ -37,6 +37,7 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -98,6 +99,10 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
         allComments = findViewById(R.id.allcomments);
         addReview = findViewById(R.id.addReview);
 
+
+//
+
+
         // for piechart
         ArrayList<String> students = new ArrayList<String>();
         students.add("Freshman");
@@ -120,10 +125,14 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
         professorList =  new ArrayList<String>();
         professorList.add(" ");
 
+
         Intent courseNameIntent = getIntent();
         universityName = courseNameIntent.getStringExtra("universityName");
         departmentSelected = courseNameIntent.getStringExtra("departmentSelected");
         String courseTitlearray[] = courseNameIntent.getStringExtra("courseName").split(" ");
+
+//         splitting the course name
+
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,7 +153,10 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
             courseHeader=courseHeader+courseTitlearray[i]+" ";
         }
 
+        //        setting the title of the details page that  includes department name, course title and the course code
         courseName.setText(departmentSelected+" "+courseHeader);
+
+
 
 
         database = FirebaseDatabase.getInstance();
@@ -309,6 +321,23 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = authObj.getCurrentUser();
+
+//        checking if the user has logged out
+        if(currentUser == null){
+
+            Intent openDashboard = new Intent(CourseDetail.this, SelectUniversity.class);
+            startActivity(openDashboard);
+            finish();
+        }
+
+    }
+
     protected void logoutUser() {
         authObj.signOut();
         Intent in = new Intent(getApplicationContext(), SelectUniversity.class);
@@ -321,6 +350,11 @@ public class CourseDetail extends AppCompatActivity implements AdapterView.OnIte
         Log.d("professor","selected");
 //        Toast.makeText(CourseDetail.this,"selected",Toast.LENGTH_LONG).show();
 
+
+//        initilally the information related to the professor will be empty
+//        on selecting the professor name
+//        displaying the data in charts and stars form
+//       the professor names for each course will be present in the database
 
                 professorSelected  = professorList.get(position);
                 ratingBar.setVisibility(View.VISIBLE);

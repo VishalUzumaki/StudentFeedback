@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -87,6 +88,11 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
 
         commentsList.setAdapter(commentsAdapter);
 
+
+//        using an onclick listener becasue for some reason the onitemselect listener was not working
+
+//        on selecting a particular comment navigating to its details page
+
         commentsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -126,8 +132,8 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
                 commentsListData.clear();
                 idofComments.clear();
 
-//                commentsListData.add("");
-//                idofComments.add("0");
+                commentsListData.add("Comments :");
+                idofComments.add("0");
 
                 int count = 0;
                 for (DataSnapshot objSnapshot: dataSnapshot.getChildren()) {
@@ -138,9 +144,9 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
 
                     Integer strikeCount = Integer.parseInt(objSnapshot.child("strike").getValue().toString());
                     if(strikeCount<3) {
-                        String tempData="comment: " + count;
-//                        tempData=objSnapshot.child("text").getValue().toString();
-//
+                        String tempData="comment: " + count+ " ";
+                       tempData=tempData+objSnapshot.child("text").getValue().toString();
+
 //                        tempData=tempData+"\n Upvote :"+ objSnapshot.child("upvote").getValue().toString()+ "     Detailed info->";
 
 
@@ -164,6 +170,23 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
 
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = authObj.getCurrentUser();
+
+//        checking if the user has logged out
+        if(currentUser == null){
+
+            Intent openDashboard = new Intent(AllComments.this, SelectUniversity.class);
+            startActivity(openDashboard);
+            finish();
+        }
+
+    }
+
+
     protected void logoutUser() {
         authObj.signOut();
         Intent in = new Intent(getApplicationContext(), SelectUniversity.class);
@@ -178,17 +201,18 @@ public class AllComments extends AppCompatActivity implements AdapterView.OnItem
         String commentSelected = commentsListData.get(position);
 
 
+if(position!=0) {
+    Intent object = new Intent(AllComments.this, IndividualComment.class);
 
-        Intent object = new Intent(AllComments.this, IndividualComment.class);
+    object.putExtra("UniversityName", universityName);
+    object.putExtra("Department", departmentSelected);
+    object.putExtra("CouseSelected", courseTitle);
+    object.putExtra("Comment", idofComments.get(position));
 
-        object.putExtra("UniversityName", universityName);
-        object.putExtra("Department", departmentSelected);
-        object.putExtra("CouseSelected", courseTitle);
-        object.putExtra("Comment", idofComments.get(position));
+    startActivity(object);
+}
 
-        startActivity(object);
-
-    }
+}
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {

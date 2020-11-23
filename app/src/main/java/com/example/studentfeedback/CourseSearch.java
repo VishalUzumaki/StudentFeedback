@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -92,6 +93,10 @@ public class CourseSearch extends AppCompatActivity {
         final ArrayList<String> placeholderforDepartmentName = new ArrayList<>();
         final ArrayAdapter adapter= new ArrayAdapter(this, R.layout.course_list_item, R.id.label, list);
         coursesList.setAdapter(adapter);
+
+
+//        onSelecting any particular course using Intent to nagivagte to the course details page passign necessary information such as
+//        university name and department to use in the details page and to get the correct refrence to the firebase data store.
 
         coursesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -167,6 +172,9 @@ public class CourseSearch extends AppCompatActivity {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+//                 storing the database refrence object in temp_data so that the search can be performed on this object.
 
                 temp_dataSnapshot = dataSnapshot;
 
@@ -257,6 +265,9 @@ public class CourseSearch extends AppCompatActivity {
 
                 DatabaseReference departmentSpecificCourse;
 
+
+//                if department is not Selected and the course was visited directly then we need to first find the department to get the refrence of database
+
                 if(departmentSelected != "All")
                 {
                     departmentSpecificCourse = database.getReference().child("University").child(universityName).child(departmentSelected);
@@ -326,6 +337,21 @@ public class CourseSearch extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = authObj.getCurrentUser();
+
+//        checking if the user has logged out
+        if(currentUser == null){
+
+            Intent openDashboard = new Intent(CourseSearch.this, SelectUniversity.class);
+            startActivity(openDashboard);
+            finish();
+        }
+
+    }
 
     protected void logoutUser() {
         authObj.signOut();
